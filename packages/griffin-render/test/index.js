@@ -1,9 +1,11 @@
 const BaseComponent = require('../lib/index').BaseComponent
 
+let list = require(__dirname + '/../examples/a.pug')
+
 class TestAComponent extends BaseComponent{
     
     constructor(){
-        super(require('fs').readFileSync(__dirname + '/../examples/a.pug', 'utf8'))
+        super(list)
     }
 
     render(){

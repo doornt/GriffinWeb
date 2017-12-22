@@ -1,4 +1,3 @@
-var fs = require('fs');
 var path = require('path');
 var lex = require('pug-lexer');
 var stripComments = require('pug-strip-comments');
