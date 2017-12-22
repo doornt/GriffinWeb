@@ -1,4 +1,4 @@
-const BaseComponent = require('../lib/index').BaseComponent
+const BaseComponent = require('../lib/gn.ts').BaseComponent
 
 let list = require(__dirname + '/../examples/a.pug')
 
