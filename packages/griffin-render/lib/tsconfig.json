@@ -4,6 +4,7 @@
         "moduleResolution":"classic",
         "module": "amd",
         "rootDir": ".",
+        "outFile": "gn.js",
         "lib": [
             "es5",
             "es2015",
