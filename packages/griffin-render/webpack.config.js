@@ -1,23 +1,30 @@
 const path = require('path');
+let output = path.resolve(__dirname, 'dist')
 
-const config = {
-    entry: './test/index.js',
-    output: {
-        path: path.resolve(__dirname, 'dist'),
-        filename: 'bundle.js'
-    },
-    resolveLoader: {
-        alias: {
-          "griffin-loader": path.join(__dirname, "../griffin-loader/lib/index.js")
-        }
-    },
-    module: {
-        rules: [
-            { test: /\.pug$/, use: 'griffin-loader' },
-            { test: /\.ts$/, use: 'ts-loader' }
-            
-        ]
+module.exports = env =>{
+
+    if(env.NODE_ENV == "xcode"){
+        output = path.resolve(__dirname,"../../../griffin/ios/Griffin/Griffin")
     }
-};
 
-module.exports = config;
+    return {
+        entry: './test/index.js',
+        output: {
+            path: output,
+            filename: 'bundle.js'
+        },
+        resolveLoader: {
+            alias: {
+              "griffin-loader": path.join(__dirname, "../griffin-loader/lib/index.js")
+            }
+        },
+        module: {
+            rules: [
+                { test: /\.pug$/, use: 'griffin-loader' },
+                { test: /\.ts$/, use: 'ts-loader' }
+                
+            ]
+        }
+    };
+    
+}

@@ -1,4 +1,4 @@
-const BaseComponent = require('../dist/gn.js').BaseComponent
+const {BaseComponent,launchWithComponent} = require('../dist/gn.js')
 
 let list = require(__dirname + '/../examples/a.pug')
 
@@ -19,4 +19,4 @@ class TestAComponent extends BaseComponent{
     // }
 }
 
-new TestAComponent()
+launchWithComponent(new TestAComponent())

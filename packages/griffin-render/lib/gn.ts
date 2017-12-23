@@ -1,9 +1,12 @@
-// export {BaseComponent} from "./Components/BaseComponent"
-export {BaseComponent} from "./Components/BaseComponent"
+import { BaseComponent } from "./Components/BaseComponent";
+import { NativeManager } from "./Native/index";
 
+const launchWithComponent = (view:BaseComponent)=>{
+    NativeManager.setRootView(view.$nativeView) 
+}
 
 // debugger
 
 // const A
 
-// export {BaseComponent}
+export {BaseComponent,launchWithComponent}

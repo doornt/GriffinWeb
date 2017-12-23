@@ -10,6 +10,8 @@ export class BaseComponent{
 
     private $view:RenderComponent
 
+    public $nativeView = null
+
     constructor(ast:IPugBlock){
         ComponentManager.instance.autoRegister(this.constructor.name,this.constructor)
         this.$ast = new AstManager(ast)
@@ -20,6 +22,7 @@ export class BaseComponent{
 
     $rebuildAst(){
         this.$view = this.$ast.compile({})
+        this.$nativeView = this.$view.$nativeView
     }
 
     init(){
@@ -31,4 +34,6 @@ export class BaseComponent{
     viewDidLoad(){
         // this.$renders.map(item=>item.$render())
     }
+
+    
 }

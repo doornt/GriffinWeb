@@ -9,7 +9,9 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build-test": "tsc && webpack"
+    "build-test": "tsc && webpack",
+    "build-publish": "tsc && webpack --env.NODE_ENV=xcode"
+    
   },
   "author": "",
   "license": "ISC",
