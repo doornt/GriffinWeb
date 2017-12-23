@@ -1,18 +1,21 @@
-import {IPugNode} from "../Interface/INode"
+import {IPugNode, IPugAttr} from "../Interface/INode"
 
 export class RenderComponent{
 
-    private $node:IPugNode
+    private $attrs:Array<IPugAttr>
 
     private $children:Array<RenderComponent> = []
 
-    constructor(node:IPugNode){
-        this.$node = node
-        this.$children = node.children.map(n=>new RenderComponent(n))
+    constructor(attrs:Array<IPugAttr>){
+        this.$attrs = attrs ||  []
     }
 
     $render(){
         this.$children.map(item=>item.$render())
+    }
+
+    addChild(child:RenderComponent){
+        this.$children.push(child)
     }
 
 }

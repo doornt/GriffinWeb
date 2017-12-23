@@ -1,7 +1,7 @@
-import {BaseComponent} from "./Components/BaseComponent"
+export {BaseComponent} from "./Components/BaseComponent"
 
 
 
-export {
-    BaseComponent
-}
+// export {
+//     BaseComponent
+// }

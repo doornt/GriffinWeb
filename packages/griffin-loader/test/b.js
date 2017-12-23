@@ -1,4 +1,4 @@
-var pug = require('../lib/compiler')
+var pug = require('pug')
 
 var path = require('path')
 
@@ -8,6 +8,6 @@ var str = require('fs').readFileSync(filename, 'utf8')
 
 var fn = pug.compile(str,{filename})
 
-console.error(fn)
+var s = fn({test:1})
 
-// require('./b.js')
+console.error(fn)

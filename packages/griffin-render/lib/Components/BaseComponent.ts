@@ -1,28 +1,34 @@
 
 import {RenderComponent} from "./RenderComponent"
-import {IPugNode} from "../Interface/INode"
+import {IPugNode, IPugBlock} from "../Interface/INode"
 import {ComponentManager} from "../Manager/ComponentManager"
+import {AstManager} from "../Manager/AstManager"
 
 export class BaseComponent{
 
-    private $nodes:Array<IPugNode> = []
+    private $ast:AstManager
 
-    private $renders:Array<RenderComponent> = []
+    private $view:RenderComponent
 
-    constructor(pugJson:Array<IPugNode>){
+    constructor(ast:IPugBlock){
         ComponentManager.instance.autoRegister(this.constructor.name,this.constructor)
-        this.$nodes = pugJson
+        this.$ast = new AstManager(ast)
+        this.$rebuildAst()
         this.init()
         this.viewDidLoad()
     }
 
+    $rebuildAst(){
+        this.$view = this.$ast.compile({})
+    }
+
     init(){
-        this.$renders = this.$nodes.map(node=>{
-            return new RenderComponent(node)
-        })
+        // this.$renders = this.$nodes.map(node=>{
+        //     return new RenderComponent(node)
+        // })
     }
 
     viewDidLoad(){
-        this.$renders.map(item=>item.$render())
+        // this.$renders.map(item=>item.$render())
     }
 }

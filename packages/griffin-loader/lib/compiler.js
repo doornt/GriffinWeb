@@ -16,6 +16,18 @@ function applyPlugins(value, options, plugins, name) {
     }, value);
 }
 
+function findReplacementFunc(plugins, name) {
+    var eligiblePlugins = plugins.filter(function (plugin) {
+      return plugin[name];
+    });
+  
+    if (eligiblePlugins.length > 1) {
+      throw new Error('Two or more plugins all implement ' + name + ' method.');
+    } else if (eligiblePlugins.length) {
+      return eligiblePlugins[0][name].bind(eligiblePlugins[0]);
+    }
+    return null;
+  }
 
 exports.compile = function (str, options = {}) {
     var debug_sources = {};
@@ -99,6 +111,8 @@ exports.compile = function (str, options = {}) {
     ast = link(ast);
     ast = applyPlugins(ast, options, plugins, 'postLink');
 
-    return require('./dom-node.js').createNodes(ast)
+    // return require('./dom-node.js').createNodes(ast)
+
+    return ast
 
 }
