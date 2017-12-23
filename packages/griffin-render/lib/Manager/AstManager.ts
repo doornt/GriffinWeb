@@ -45,7 +45,8 @@ export class AstManager{
                 
             default:
                 view = this.$visitTag(node as IPugNode)
-                view.addChild(new AstManager((<IPugNode>node).block).compile(this.$inputData))
+                let block = (<IPugNode>node).block
+                block && view.addChild(new AstManager(block).compile(this.$inputData))
             break
         }
         return view

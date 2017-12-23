@@ -1,6 +1,4 @@
-const BaseComponent = require('../lib/gn.ts').BaseComponent
-
-console.error(BaseComponent)
+const BaseComponent = require('../dist/gn.js').BaseComponent
 
 let list = require(__dirname + '/../examples/a.pug')
 
