@@ -4,13 +4,13 @@ import { NativeManager } from "../Native/index";
 
 export class RenderComponent{
 
-    private $attrs:Array<IPugAttr>
+    protected $attrs:Array<IPugAttr>
 
-    private $children:Array<RenderComponent> = []
+    protected $children:Array<RenderComponent> = []
 
-    private $attr = {}
+    protected $attr = {}
 
-    private $nativeView = null
+    protected $nativeView = null
 
     public get nativeView(){
         return this.$nativeView
@@ -19,8 +19,13 @@ export class RenderComponent{
     constructor(attrs:Array<IPugAttr>){
         this.$attrs = attrs ||  []
         for(let attr of this.$attrs){
+            attr.val = attr.val.replace(/\"/g,"")
             this.$buildAttr(attr)
         }
+        this.createView()
+    }
+
+    protected createView(){
         this.$nativeView = NativeManager.createView(this.$attr)
     }
 
@@ -29,23 +34,25 @@ export class RenderComponent{
     }
 
     addChild(child:RenderComponent){
+        if(!child){
+            return
+        }
         this.$children.push(child)
+        NativeManager.addSubview(this.$nativeView,child.nativeView)
     }
 
-    private $buildAttr(attr:IPugAttr){
-
-        let val = attr.val.replace(/\"/g,"")
+    protected $buildAttr(attr:IPugAttr){
         
         switch(attr.name){
             case "width":
             case "height":
             case "left":
             case "top":
-                let n = parseInt(val)
+                let n = parseInt(attr.val)
                 this.$attr[attr.name] = n
             break
             default:
-                this.$attr[attr.name] = val
+                this.$attr[attr.name] = attr.val
         }
 
     }

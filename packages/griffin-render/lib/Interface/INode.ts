@@ -10,6 +10,12 @@ export interface IPugNode{
     block:IPugBlock
 }
 
+export interface IPugText{
+    attrs:Array<IPugAttr>,
+    type:string,
+    val:string,
+}
+
 export interface IPugConditional{
     alternate:IPugBlock,
     consequent:IPugBlock,
@@ -18,6 +24,6 @@ export interface IPugConditional{
 }
 
 export interface IPugBlock{
-    nodes:Array<IPugNode|IPugBlock|IPugConditional>,
+    nodes:Array<IPugNode|IPugBlock|IPugConditional|IPugText>,
     type:string
 }

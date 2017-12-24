@@ -1,7 +1,8 @@
-import {IPugBlock, IPugNode, IPugConditional} from "../Interface/INode"
+import {IPugBlock, IPugNode, IPugConditional, IPugText} from "../Interface/INode"
 import {BaseComponent} from "../Components/BaseComponent"
 import {RenderComponent} from "../Components/RenderComponent"
 import { NativeManager } from "../Native/index";
+import { TextComponent } from "../Components/TextComponent";
 
 export class AstManager{
 
@@ -38,13 +39,15 @@ export class AstManager{
         
     }
 
-    private $visitNode(node:IPugNode|IPugConditional|IPugBlock){
+    private $visitNode(node:IPugNode|IPugConditional|IPugBlock|IPugText){
         let view = null
         switch(node.type){
             case "block":
                 view = this.$visitBlock(node as IPugBlock)
             break
-                
+            case "Text":
+                view = this.$visitText(node as IPugText)
+            break
             default:
                 view = this.$visitTag(node as IPugNode)
                 let block = (<IPugNode>node).block
@@ -56,6 +59,12 @@ export class AstManager{
 
     private $visitBlock(node:IPugBlock){
 
+    }
+
+    private $visitText(node:IPugText){
+        node.attrs = node.attrs || []
+        node.attrs.push({name:"text",val:node.val})
+        return new TextComponent(node.attrs)
     }
 
     private $visitTag(node:IPugNode){
