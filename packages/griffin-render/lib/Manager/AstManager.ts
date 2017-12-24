@@ -18,24 +18,24 @@ export class AstManager{
     compile(data){
         this.$inputData = data || {}
 
-        let root:RenderComponent = null
+        // let root:RenderComponent = null
 
         let children = []
         for(let node of this.$ast.nodes){
             children.push(this.$visitNode(node))
         }
 
-        if(children.length > 1){
-            root = new RenderComponent(null)
-            for(let child of children){
-                root.addChild(child)
-            }
-        }else{
-            root = children[0]
-        }
+        // if(children.length > 1){
+        //     root = new RenderComponent(null)
+        //     for(let child of children){
+        //         root.addChild(child)
+        //     }
+        // }else{
+        //     root = children[0]
+        // }
         
       
-        return root
+        return children
         
     }
 
@@ -51,7 +51,12 @@ export class AstManager{
             default:
                 view = this.$visitTag(node as IPugNode)
                 let block = (<IPugNode>node).block
-                block && view.addChild(new AstManager(block).compile(this.$inputData))
+                if(block){
+                    let children = new AstManager(block).compile(this.$inputData)
+                    for(let child of children){
+                        view.addChild(child)
+                    }
+                }
             break
         }
         return view

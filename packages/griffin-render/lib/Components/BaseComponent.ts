@@ -22,7 +22,15 @@ export class BaseComponent{
     }
 
     $rebuildAst(){
-        this.$view = this.$ast.compile({})
+        let children = this.$ast.compile({})
+        if(children.length == 1 ){
+            this.$view = children[0]
+        }else{
+            this.$view = new RenderComponent(null)
+            for(let child of children){
+                this.$view.addChild(child)
+            }
+        }
         this.$nativeView = this.$view.nativeView
     }
 
