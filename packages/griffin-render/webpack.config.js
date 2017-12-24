@@ -3,7 +3,7 @@ let output = path.resolve(__dirname, 'dist')
 
 module.exports = env =>{
 
-    if(env.NODE_ENV == "xcode"){
+    if(env && env.NODE_ENV == "xcode"){
         output = path.resolve(__dirname,"../../../griffin/ios/Griffin/Griffin")
     }
 

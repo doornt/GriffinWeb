@@ -1,7 +1,6 @@
 import {IPugNode, IPugAttr} from "../Interface/INode"
 import { NativeManager } from "../Native/index";
 
-declare var consoleLog:any
 
 export class RenderComponent{
 
@@ -11,14 +10,17 @@ export class RenderComponent{
 
     private $attr = {}
 
-    public $nativeView = null
+    private $nativeView = null
+
+    public get nativeView(){
+        return this.$nativeView
+    }
 
     constructor(attrs:Array<IPugAttr>){
         this.$attrs = attrs ||  []
         for(let attr of this.$attrs){
-            this.$attr[attr.name] = isNaN(<any>attr.val)?attr.val:parseInt(attr.val)
+            this.$buildAttr(attr)
         }
-        consoleLog(JSON.stringify(this.$attr))
         this.$nativeView = NativeManager.createView(this.$attr)
     }
 
@@ -28,6 +30,22 @@ export class RenderComponent{
 
     addChild(child:RenderComponent){
         this.$children.push(child)
+    }
+
+    private $buildAttr(attr:IPugAttr){
+        
+        switch(attr.name){
+            case "width":
+            case "height":
+            case "left":
+            case "top":
+                let n = parseInt(attr.val)
+                this.$attr[attr.name] = n
+            break
+            default:
+                this.$attr[attr.name] = attr.val
+        }
+
     }
 
 }

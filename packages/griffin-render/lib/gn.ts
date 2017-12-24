@@ -2,7 +2,7 @@ import { BaseComponent } from "./Components/BaseComponent";
 import { NativeManager } from "./Native/index";
 
 const launchWithComponent = (view:BaseComponent)=>{
-    NativeManager.setRootView(view.$nativeView) 
+    NativeManager.setRootView(view.nativeView) 
 }
 
 // debugger

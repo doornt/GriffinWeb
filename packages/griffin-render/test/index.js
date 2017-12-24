@@ -11,12 +11,6 @@ class TestAComponent extends BaseComponent{
     render(){
         console.error(this.ast)
     }
-
-    
-
-    // click(e){
-
-    // }
 }
 
 launchWithComponent(new TestAComponent())

@@ -3,6 +3,7 @@ import {RenderComponent} from "./RenderComponent"
 import {IPugNode, IPugBlock} from "../Interface/INode"
 import {ComponentManager} from "../Manager/ComponentManager"
 import {AstManager} from "../Manager/AstManager"
+import { NativeManager } from "../Native/index";
 
 export class BaseComponent{
 
@@ -10,7 +11,7 @@ export class BaseComponent{
 
     private $view:RenderComponent
 
-    public $nativeView = null
+    private $nativeView = null
 
     constructor(ast:IPugBlock){
         ComponentManager.instance.autoRegister(this.constructor.name,this.constructor)
@@ -22,7 +23,12 @@ export class BaseComponent{
 
     $rebuildAst(){
         this.$view = this.$ast.compile({})
-        this.$nativeView = this.$view.$nativeView
+        this.$nativeView = this.$view.nativeView
+    }
+
+    public get nativeView(){
+        return this.$nativeView
+
     }
 
     init(){

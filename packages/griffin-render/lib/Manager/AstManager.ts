@@ -1,6 +1,7 @@
 import {IPugBlock, IPugNode, IPugConditional} from "../Interface/INode"
 import {BaseComponent} from "../Components/BaseComponent"
 import {RenderComponent} from "../Components/RenderComponent"
+import { NativeManager } from "../Native/index";
 
 export class AstManager{
 
@@ -31,6 +32,7 @@ export class AstManager{
         }else{
             root = children[0]
         }
+        
       
         return root
         
