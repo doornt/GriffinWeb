@@ -33,17 +33,19 @@ export class RenderComponent{
     }
 
     private $buildAttr(attr:IPugAttr){
+
+        let val = attr.val.replace(/\"/g,"")
         
         switch(attr.name){
             case "width":
             case "height":
             case "left":
             case "top":
-                let n = parseInt(attr.val)
+                let n = parseInt(val)
                 this.$attr[attr.name] = n
             break
             default:
-                this.$attr[attr.name] = attr.val
+                this.$attr[attr.name] = val
         }
 
     }
