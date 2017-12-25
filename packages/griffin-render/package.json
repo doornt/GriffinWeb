@@ -11,7 +11,6 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build-test": "tsc && webpack",
     "build-publish": "tsc && webpack --env.NODE_ENV=xcode"
-    
   },
   "author": "",
   "license": "ISC",
@@ -19,5 +18,8 @@
     "ts-loader": "^3.2.0",
     "typescript": "^2.6.2",
     "webpack": "^3.10.0"
+  },
+  "dependencies": {
+    "@types/node": "^8.5.2"
   }
 }

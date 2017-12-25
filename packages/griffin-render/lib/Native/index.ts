@@ -5,7 +5,7 @@ declare var createView:Function
 declare var createLabel:Function
 declare var setRootView:Function
 declare var addSubview:Function
-declare var consoleLog:any
+
 
 var isNative = typeof createView != "undefined"
 
@@ -15,7 +15,7 @@ export class NativeManager{
         if(!isNative){
             return
         }
-        consoleLog("\ncreateView call:" + JSON.stringify(attr))
+        console.log("createView call:" + JSON.stringify(attr))
         return createView(attr)
     }
 
@@ -23,7 +23,7 @@ export class NativeManager{
         if(!isNative){
             return
         }
-        consoleLog("\createText call:" + JSON.stringify(attr))
+        console.log("createText call:" + JSON.stringify(attr))
         return createLabel(attr)
     }
 
@@ -31,8 +31,7 @@ export class NativeManager{
         if(!isNative){
             return
         }
-        consoleLog("\nsetRootView call:" )
-        consoleLog(view)
+        console.log("setRootView call:",view )
         return setRootView(view)
     }
 
@@ -40,17 +39,8 @@ export class NativeManager{
         if(!isNative){
             return
         }
-        consoleLog("\naddSubview call:")
-        consoleLog(view1)
-        consoleLog(view2)
+        console.log("addSubview call:",view1,view2)
         return addSubview(view1,view2)
-    }
-
-    public static Log(arg:any){
-        if(!isNative){
-            return
-        }
-        return consoleLog(arg)
     }
 
 
