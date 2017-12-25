@@ -43,6 +43,12 @@ export class BaseComponent{
         // this.$renders = this.$nodes.map(node=>{
         //     return new RenderComponent(node)
         // })
+
+        console.log(global)
+
+        setTimeout(() => {
+            console.log("timeout")
+        }, 1000);
     }
 
     viewDidLoad(){
