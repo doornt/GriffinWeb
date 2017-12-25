@@ -1,7 +1,6 @@
 import {IPugBlock, IPugNode, IPugConditional, IPugText} from "../Interface/INode"
 import {BaseComponent} from "../Components/BaseComponent"
 import {RenderComponent} from "../Components/RenderComponent"
-import { NativeManager } from "../Native/index";
 import { TextComponent } from "../Components/TextComponent";
 
 export class AstManager{

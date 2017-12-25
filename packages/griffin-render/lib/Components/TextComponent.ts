@@ -1,6 +1,6 @@
 import { RenderComponent } from "./RenderComponent";
 import { IPugAttr } from "../Interface/INode";
-import { NativeManager } from "../Native/index";
+import { ViewManager } from "../Runtime/index";
 
 
 export class TextComponent extends RenderComponent{
@@ -9,7 +9,7 @@ export class TextComponent extends RenderComponent{
     }
 
     protected createView(){
-        this.$nativeView = NativeManager.createText(this.$attr)
+        this.$nativeView = ViewManager.createText(this.$attr)
 
     }
 }

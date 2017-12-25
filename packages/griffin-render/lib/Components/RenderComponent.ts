@@ -1,5 +1,5 @@
 import {IPugNode, IPugAttr} from "../Interface/INode"
-import { NativeManager } from "../Native/index";
+import { ViewManager } from "../Runtime/index";
 
 
 export class RenderComponent{
@@ -26,7 +26,7 @@ export class RenderComponent{
     }
 
     protected createView(){
-        this.$nativeView = NativeManager.createView(this.$attr)
+        this.$nativeView = ViewManager.createView(this.$attr)
     }
 
     $render(){
@@ -38,7 +38,7 @@ export class RenderComponent{
             return
         }
         this.$children.push(child)
-        NativeManager.addSubview(this.$nativeView,child.nativeView)
+        ViewManager.addSubview(this.$nativeView,child.nativeView)
     }
 
     protected $buildAttr(attr:IPugAttr){

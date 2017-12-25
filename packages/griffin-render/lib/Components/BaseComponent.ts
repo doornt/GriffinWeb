@@ -3,7 +3,6 @@ import {RenderComponent} from "./RenderComponent"
 import {IPugNode, IPugBlock} from "../Interface/INode"
 import {ComponentManager} from "../Manager/ComponentManager"
 import {AstManager} from "../Manager/AstManager"
-import { NativeManager } from "../Native/index";
 
 export class BaseComponent{
 
