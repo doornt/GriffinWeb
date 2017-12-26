@@ -1,7 +1,8 @@
 import {IPugBlock, IPugNode, IPugConditional, IPugText} from "../Interface/INode"
-import {BaseComponent} from "../Components/BaseComponent"
-import {RenderComponent} from "../Runtime/VDOM/RenderComponent"
-import { TextComponent } from "../Runtime/VDOM/TextComponent";
+import { ComponentManager } from "./ComponentManager";
+// import {BaseComponent} from "../Components/BaseComponent"
+// import {RenderComponent} from "../Runtime/VDOM/RenderComponent"
+// import { TextComponent } from "../Runtime/VDOM/TextComponent";
 
 export class AstManager{
 
@@ -58,14 +59,14 @@ export class AstManager{
     private $visitText(node:IPugText){
         node.attrs = node.attrs || []
         node.attrs.push({name:"text",val:node.val})
-        return new TextComponent(node.attrs)
+        return ComponentManager.instance.createViewByTag("text",node.attrs)
     }
 
     private $visitTag(node:IPugNode){
         let view = null
         switch(node.name){
             default:
-                view = new RenderComponent(node.attrs)
+                view = ComponentManager.instance.createViewByTag(node.name,node.attrs)
             break
         }
         return view

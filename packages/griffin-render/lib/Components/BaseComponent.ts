@@ -12,7 +12,6 @@ export class BaseComponent{
     private $view:RenderComponent
 
     constructor(ast:IPugBlock){
-        ComponentManager.instance.autoRegister(this.constructor.name,this.constructor)
         this.$ast = new AstManager(ast)
         this.$rebuildAst()
         this.init()

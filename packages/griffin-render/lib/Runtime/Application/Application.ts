@@ -3,6 +3,7 @@ import { BaseComponent } from "../../gn";
 import { TaskManager } from "../Bridge/TaskManager";
 import { RootView } from "../VDOM/RootView";
 import { ETaskType, ITaskEvent, EViewTask } from "../Interface/Task";
+import * as Html5 from "../../Html5/index"
 
 export class Application{
     private static $inst = null
@@ -25,6 +26,7 @@ export class Application{
     public init(){
         setup()
         TaskManager.instance.init()
+        Html5.setup()
         this.$root = RootView.create()
     }
 
