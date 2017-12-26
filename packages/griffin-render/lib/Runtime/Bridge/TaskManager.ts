@@ -37,24 +37,26 @@ export class TaskManager{
                 this.$createView(e.nodeId,e.data)
             break
             case EViewTask.CREATE_LABEL:
-                this.$createView(e.nodeId,e.data)
+                this.$createText(e.nodeId,e.data)
             break
             case EViewTask.ADD_SUBVIEW:
-                this.$createView(e.parentId,e.nodeId)
+                this.$addSubview(e.parentId,e.nodeId)
             break
             case EViewTask.ADD_CHILD:
                 this.$addChild(e.parentId || e.nodeId,e.data)
+            break
+            default:
             break
         }
     }
 
     private $createView(selfId:string,attr:any){
-        console.log("createView call:" + JSON.stringify(attr))
+        console.log("createView call:" ,selfId, JSON.stringify(attr))
         return global.createView(selfId,attr)
     }
 
     private $createText(selfId:string,attr:any){
-        console.log("createText call:" + JSON.stringify(attr))
+        console.log("createText call:" ,selfId, JSON.stringify(attr))
         return global.createLabel(selfId,attr)
     }
 

@@ -12,8 +12,10 @@ export class TextComponent extends RenderComponent{
     protected createView(){
     
         TaskManager.instance.send(ETaskType.VIEW,<ITaskEvent>{
-            action:EViewTask.CREATE_VIEW,
-            nodeId:this.id
+            action:EViewTask.CREATE_LABEL,
+            nodeId:this.id,
+            data:this.$attr
+
         })
     }
 }

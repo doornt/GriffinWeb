@@ -2,7 +2,7 @@ import { setup } from "./setup";
 import { BaseComponent } from "../../gn";
 import { TaskManager } from "../Bridge/TaskManager";
 import { RootView } from "../VDOM/RootView";
-import { ETaskType, ITaskEvent } from "../Interface/Task";
+import { ETaskType, ITaskEvent, EViewTask } from "../Interface/Task";
 
 export class Application{
     private static $inst = null
@@ -22,16 +22,17 @@ export class Application{
         return (<any>global).Environment
     }
 
-    public static init(){
+    public init(){
         setup()
         TaskManager.instance.init()
-        RootView.create()
+        this.$root = RootView.create()
     }
 
     public runWithModule(view:BaseComponent){
         TaskManager.instance.send(ETaskType.VIEW,<ITaskEvent>{
             parentId:this.$root.id,
-            nodeId:view.id
+            nodeId:view.id,
+            action:EViewTask.ADD_SUBVIEW
         })
     }
 }

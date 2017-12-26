@@ -11,12 +11,9 @@ export class BaseComponent{
 
     private $view:RenderComponent
 
-    private $instanceId = null
-
     constructor(ast:IPugBlock){
         ComponentManager.instance.autoRegister(this.constructor.name,this.constructor)
         this.$ast = new AstManager(ast)
-        this.$instanceId = generateID()
         this.$rebuildAst()
         this.init()
         this.viewDidLoad()
@@ -36,7 +33,7 @@ export class BaseComponent{
 
 
     public get id(){
-        return this.$instanceId
+        return this.$view.id
     }
 
     init(){

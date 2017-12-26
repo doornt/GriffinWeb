@@ -1,6 +1,7 @@
 import {IPugNode, IPugAttr} from "../../Interface/INode"
 import { TaskManager } from "../Bridge/TaskManager";
 import { ETaskType, EViewTask, ITaskEvent } from "../Interface/Task";
+import { generateID } from "../../Utils/NodeID";
 
 export class RenderComponent{
 
@@ -10,7 +11,7 @@ export class RenderComponent{
 
     protected $attr = {}
 
-    private $instanceId = null
+    protected $instanceId:string = null
 
     constructor(attrs:Array<IPugAttr>){
         this.$attrs = attrs ||  []
@@ -18,6 +19,7 @@ export class RenderComponent{
             attr.val = attr.val.replace(/\"/g,"")
             this.$buildAttr(attr)
         }
+        this.$instanceId = generateID()
         this.createView()
     }
 
@@ -29,7 +31,8 @@ export class RenderComponent{
     protected createView(){
         TaskManager.instance.send(ETaskType.VIEW,<ITaskEvent>{
             action:EViewTask.CREATE_VIEW,
-            nodeId:this.id
+            nodeId:this.id,
+            data:this.$attr
         })
     }
 
