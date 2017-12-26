@@ -1,7 +1,7 @@
 import {IPugBlock, IPugNode, IPugConditional, IPugText} from "../Interface/INode"
 import {BaseComponent} from "../Components/BaseComponent"
-import {RenderComponent} from "../Components/RenderComponent"
-import { TextComponent } from "../Components/TextComponent";
+import {RenderComponent} from "../Runtime/VDOM/RenderComponent"
+import { TextComponent } from "../Runtime/VDOM/TextComponent";
 
 export class AstManager{
 
@@ -24,16 +24,6 @@ export class AstManager{
             children.push(this.$visitNode(node))
         }
 
-        // if(children.length > 1){
-        //     root = new RenderComponent(null)
-        //     for(let child of children){
-        //         root.addChild(child)
-        //     }
-        // }else{
-        //     root = children[0]
-        // }
-        
-      
         return children
         
     }

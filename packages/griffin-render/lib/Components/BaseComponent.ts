@@ -1,8 +1,9 @@
 
-import {RenderComponent} from "./RenderComponent"
 import {IPugNode, IPugBlock} from "../Interface/INode"
 import {ComponentManager} from "../Manager/ComponentManager"
 import {AstManager} from "../Manager/AstManager"
+import { generateID } from "../Utils/NodeID";
+import { RenderComponent } from "../Runtime/VDOM/RenderComponent";
 
 export class BaseComponent{
 
@@ -10,11 +11,12 @@ export class BaseComponent{
 
     private $view:RenderComponent
 
-    private $nativeView = null
+    private $instanceId = null
 
     constructor(ast:IPugBlock){
         ComponentManager.instance.autoRegister(this.constructor.name,this.constructor)
         this.$ast = new AstManager(ast)
+        this.$instanceId = generateID()
         this.$rebuildAst()
         this.init()
         this.viewDidLoad()
@@ -30,12 +32,11 @@ export class BaseComponent{
                 this.$view.addChild(child)
             }
         }
-        this.$nativeView = this.$view.nativeView
     }
 
-    public get nativeView(){
-        return this.$nativeView
 
+    public get id(){
+        return this.$instanceId
     }
 
     init(){

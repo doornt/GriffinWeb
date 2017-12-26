@@ -1,14 +1,11 @@
 import { BaseComponent } from "./Components/BaseComponent";
-import { setConsole } from "./Runtime/index";
-import { ViewManager } from "./Runtime/index";
+import { Application } from "./Runtime/Application/Application";
 
 
 const launchWithComponent = (view:BaseComponent)=>{
-    ViewManager.setRootView(view.nativeView) 
+    Application.instance.runWithModule(view) 
 }
 
-
-setConsole()
-
+Application.instance.init()
 
 export {BaseComponent,launchWithComponent}

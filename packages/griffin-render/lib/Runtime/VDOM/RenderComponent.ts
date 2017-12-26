@@ -1,6 +1,6 @@
-import {IPugNode, IPugAttr} from "../Interface/INode"
-import { ViewManager } from "../Runtime/index";
-
+import {IPugNode, IPugAttr} from "../../Interface/INode"
+import { TaskManager } from "../Bridge/TaskManager";
+import { ETaskType, EViewTask, ITaskEvent } from "../Interface/Task";
 
 export class RenderComponent{
 
@@ -10,11 +10,7 @@ export class RenderComponent{
 
     protected $attr = {}
 
-    protected $nativeView = null
-
-    public get nativeView(){
-        return this.$nativeView
-    }
+    private $instanceId = null
 
     constructor(attrs:Array<IPugAttr>){
         this.$attrs = attrs ||  []
@@ -25,8 +21,16 @@ export class RenderComponent{
         this.createView()
     }
 
+    public get id(){
+        return this.$instanceId
+    }
+
+
     protected createView(){
-        this.$nativeView = ViewManager.createView(this.$attr)
+        TaskManager.instance.send(ETaskType.VIEW,<ITaskEvent>{
+            action:EViewTask.CREATE_VIEW,
+            nodeId:this.id
+        })
     }
 
     $render(){
@@ -38,7 +42,12 @@ export class RenderComponent{
             return
         }
         this.$children.push(child)
-        ViewManager.addSubview(this.$nativeView,child.nativeView)
+        TaskManager.instance.send(ETaskType.VIEW,{
+            action:EViewTask.ADD_SUBVIEW,
+            parentId:this.id,
+            nodeId:child.id,
+            data:null
+        })
     }
 
     protected $buildAttr(attr:IPugAttr){
