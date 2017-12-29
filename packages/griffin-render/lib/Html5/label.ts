@@ -1,7 +1,6 @@
-import { RenderComponent } from "../Runtime/VDOM/RenderComponent";
 import { IPugAttr } from "../Interface/INode";
-import { TaskManager } from "../Runtime/Bridge/TaskManager";
-import { ETaskType ,ITaskEvent, EViewTask} from "../Runtime/Interface/Task";
+
+import { RenderComponent ,ETaskType ,TaskManager,ITaskEvent,EViewTask} from "../Runtime/export";
 
 
 export class Label extends RenderComponent{

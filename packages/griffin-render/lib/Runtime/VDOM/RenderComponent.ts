@@ -3,7 +3,7 @@ import { TaskManager } from "../Bridge/TaskManager";
 import { ETaskType, EViewTask, ITaskEvent } from "../Interface/Task";
 import { generateID } from "../../Utils/NodeID";
 
-export class RenderComponent{
+export abstract class RenderComponent{
 
     protected $attrs:Array<IPugAttr>
 
@@ -28,13 +28,7 @@ export class RenderComponent{
     }
 
 
-    protected createView(){
-        TaskManager.instance.send(ETaskType.VIEW,<ITaskEvent>{
-            action:EViewTask.CREATE_VIEW,
-            nodeId:this.id,
-            data:this.$attr
-        })
-    }
+    protected abstract createView()
 
     $render(){
         this.$children.map(item=>item.$render())

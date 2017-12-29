@@ -1,0 +1,23 @@
+{
+	"version": "0.2.0",
+	"configurations": [
+		{
+			"type": "node",
+			"request": "launch",
+			"name": "compile test",
+			"program": "${workspaceRoot}/packages/griffin-loader/test/a.js",
+			"cwd": "${workspaceRoot}/packages/griffin-loader/test",
+			"protocol": "inspector"
+		},
+		{
+			"type": "node",
+			"request": "launch",
+			"preLaunchTask": "compile-render",
+			"name": "render test",
+			"program": "${workspaceRoot}/packages/griffin-render/dist/bundle.js",
+			"cwd": "${workspaceRoot}/packages/griffin-render/dist",
+			"protocol": "inspector"
+		}
+		
+	]
+}

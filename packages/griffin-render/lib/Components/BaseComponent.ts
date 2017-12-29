@@ -23,7 +23,7 @@ export class BaseComponent{
         if(children.length == 1 ){
             this.$view = children[0]
         }else{
-            this.$view = new RenderComponent(null)
+            this.$view = ComponentManager.instance.createViewByTag("div",[])
             for(let child of children){
                 this.$view.addChild(child)
             }

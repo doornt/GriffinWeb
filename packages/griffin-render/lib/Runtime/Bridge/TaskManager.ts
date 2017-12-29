@@ -21,6 +21,9 @@ export class TaskManager{
     }
 
     public send(type:ETaskType,e:ITaskEvent){
+        if(!global.Environment || global.Environment == 'web'){
+            return
+        }
         switch(type){
             case ETaskType.VIEW:
                 this.$sendView(e)
@@ -32,6 +35,7 @@ export class TaskManager{
     }
 
     private $sendView(e:ITaskEvent){
+       
         switch(e.action){
             case EViewTask.CREATE_VIEW:
                 this.$createView(e.nodeId,e.data)
