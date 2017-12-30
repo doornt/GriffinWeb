@@ -8,6 +8,8 @@
     "test": "test"
   },
   "dependencies": {
+    "css-loader": "^0.28.7",
+    "postcss": "^6.0.14",
     "pug": "^2.0.0-rc.4"
   },
   "devDependencies": {},

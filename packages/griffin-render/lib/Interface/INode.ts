@@ -27,3 +27,11 @@ export interface IPugBlock{
     nodes:Array<IPugNode|IPugBlock|IPugConditional|IPugText>,
     type:string
 }
+
+
+export interface IStyle{
+    selector:string,
+    attrs:{
+        [attr:string]:string
+    }
+}

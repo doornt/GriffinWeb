@@ -11,6 +11,11 @@
             "type":"shell",
             "command": "cd packages/griffin-render && npm run build-test",
             "label": "compile-render"
+        },
+        {
+            "type":"shell",
+            "command": "cd packages/griffin-render && npm run build-publish ",
+            "label": "publish-render"
         }
     ]
 }

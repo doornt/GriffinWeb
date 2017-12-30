@@ -4,15 +4,30 @@ import { RenderComponent ,ETaskType ,TaskManager,ITaskEvent,EViewTask} from "../
 
 
 export class Label extends RenderComponent{
-    constructor(attrs:Array<IPugAttr>){
-       super(attrs)
+
+    private $text = ""
+
+    constructor(attrs:Array<IPugAttr>,styles){
+       super(attrs,styles)
+    }
+
+    protected parseAttrs(){
+        for(let attr of this.$attrs){
+            switch(attr.name){
+                case "text":
+                    this.$text = attr.val
+                break
+            }
+        }
     }
 
     protected createView(){
+        let data = Object.create(this.$styles)
+        data.text = this.$text
         TaskManager.instance.send(ETaskType.VIEW,<ITaskEvent>{
             action:EViewTask.CREATE_LABEL,
             nodeId:this.id,
-            data:this.$attr
+            data:data
         })
     }
 }

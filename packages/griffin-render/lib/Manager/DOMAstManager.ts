@@ -1,24 +1,19 @@
-import {IPugBlock, IPugNode, IPugConditional, IPugText} from "../Interface/INode"
+import {IPugBlock, IPugNode, IPugConditional, IPugText, IStyle} from "../Interface/INode"
 import { ComponentManager } from "./ComponentManager";
-// import {BaseComponent} from "../Components/BaseComponent"
-// import {RenderComponent} from "../Runtime/VDOM/RenderComponent"
-// import { TextComponent } from "../Runtime/VDOM/TextComponent";
 
-export class AstManager{
+export class DOMAstManager{
 
     private $ast:IPugBlock
-
-
     private $inputData = {}
+    private $styles:Array<IStyle>
 
-    constructor(ast:IPugBlock){
+    constructor(ast:IPugBlock,styles:any){
         this.$ast = ast
+        this.$styles = styles
     }
 
     compile(data){
         this.$inputData = data || {}
-
-        // let root:RenderComponent = null
 
         let children = []
         for(let node of this.$ast.nodes){
@@ -42,7 +37,7 @@ export class AstManager{
                 view = this.$visitTag(node as IPugNode)
                 let block = (<IPugNode>node).block
                 if(block){
-                    let children = new AstManager(block).compile(this.$inputData)
+                    let children = new DOMAstManager(block,this.$styles).compile(this.$inputData)
                     for(let child of children){
                         view.addChild(child)
                     }
@@ -59,14 +54,28 @@ export class AstManager{
     private $visitText(node:IPugText){
         node.attrs = node.attrs || []
         node.attrs.push({name:"text",val:node.val})
-        return ComponentManager.instance.createViewByTag("text",node.attrs)
+        return ComponentManager.instance.createViewByTag("text",node.attrs,{})
     }
 
     private $visitTag(node:IPugNode){
         let view = null
+        let styles = {}
+        node.attrs = node.attrs.map(attr=>{
+            return {
+                name:attr.name,
+                val:attr.val.replace(/\"/g,"").replace(/\'/g,"")
+            }
+        })
+        let list = node.attrs.filter(o=>o.name == "class")
+        for(let l of list){
+            let ss  = this.$styles.filter(s=>s.selector == "." + l.val)
+            for(let s of ss){
+                styles = Object.assign(styles,s.attrs)
+            }
+        }
         switch(node.name){
             default:
-                view = ComponentManager.instance.createViewByTag(node.name,node.attrs)
+                view = ComponentManager.instance.createViewByTag(node.name,node.attrs,styles)
             break
         }
         return view

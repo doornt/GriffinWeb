@@ -9,22 +9,27 @@ export abstract class RenderComponent{
 
     protected $children:Array<RenderComponent> = []
 
-    protected $attr = {}
+    protected $styles = {}
 
     protected $instanceId:string = null
 
-    constructor(attrs:Array<IPugAttr>){
+    constructor(attrs:Array<IPugAttr>,styles:any){
         this.$attrs = attrs ||  []
-        for(let attr of this.$attrs){
-            attr.val = attr.val.replace(/\"/g,"")
-            this.$buildAttr(attr)
+        this.parseAttrs()
+        for(let k in styles){
+            this.$buildStyle(k,styles[k])
         }
         this.$instanceId = generateID()
         this.createView()
+
     }
 
     public get id(){
         return this.$instanceId
+    }
+
+    protected parseAttrs(){
+        
     }
 
 
@@ -47,18 +52,17 @@ export abstract class RenderComponent{
         })
     }
 
-    protected $buildAttr(attr:IPugAttr){
-        
-        switch(attr.name){
+    protected $buildStyle(k,v){
+        switch(k){
             case "width":
             case "height":
             case "left":
             case "top":
-                let n = parseInt(attr.val)
-                this.$attr[attr.name] = n
+                let n = parseInt(v)
+                this.$styles[k] = n
             break
             default:
-                this.$attr[attr.name] = attr.val
+                this.$styles[k] = v
         }
 
     }

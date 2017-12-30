@@ -4,8 +4,8 @@
 		{
 			"type": "node",
 			"request": "launch",
-			"name": "compile test",
-			"program": "${workspaceRoot}/packages/griffin-loader/test/a.js",
+			"name": "loader test",
+			"program": "${workspaceRoot}/packages/griffin-loader/test/index.js",
 			"cwd": "${workspaceRoot}/packages/griffin-loader/test",
 			"protocol": "inspector"
 		},

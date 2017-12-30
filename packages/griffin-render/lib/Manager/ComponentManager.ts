@@ -19,13 +19,13 @@ export class ComponentManager{
         this._registeredClass[name] = ctr
     }
 
-    public createViewByTag(tag:string,attrs:Array<IPugAttr>){
+    public createViewByTag(tag:string,attrs:Array<IPugAttr>,styles){
         let T = this._registeredClass[tag]
         if(!T){
             console.warn("unsupported tag",tag)
             return null
         }
-        return new T(attrs)
+        return new T(attrs,styles)
     }
 
 }

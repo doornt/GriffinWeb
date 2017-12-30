@@ -1,18 +1,18 @@
 
-import {IPugNode, IPugBlock} from "../Interface/INode"
+import {IPugNode, IPugBlock, IStyle} from "../Interface/INode"
 import {ComponentManager} from "../Manager/ComponentManager"
-import {AstManager} from "../Manager/AstManager"
+import {DOMAstManager} from "../Manager/DOMAstManager"
 import { generateID } from "../Utils/NodeID";
 import { RenderComponent } from "../Runtime/VDOM/RenderComponent";
 
 export class BaseComponent{
 
-    private $ast:AstManager
+    private $ast:DOMAstManager
 
     private $view:RenderComponent
 
-    constructor(ast:IPugBlock){
-        this.$ast = new AstManager(ast)
+    constructor(pugJson:any){
+        this.$ast = new DOMAstManager({nodes:pugJson.htmls,type:"block"},pugJson.styles)
         this.$rebuildAst()
         this.init()
         this.viewDidLoad()
@@ -23,12 +23,13 @@ export class BaseComponent{
         if(children.length == 1 ){
             this.$view = children[0]
         }else{
-            this.$view = ComponentManager.instance.createViewByTag("div",[])
+            this.$view = ComponentManager.instance.createViewByTag("div",[],{})
             for(let child of children){
                 this.$view.addChild(child)
             }
         }
     }
+    
 
 
     public get id(){
