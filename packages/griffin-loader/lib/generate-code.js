@@ -114,7 +114,7 @@ class Generate {
         if (cond.alternate) {
             if (cond.alternate.type === 'Conditional') {
                 this.buf.push('else')
-                this.visitConditional(cond.alternate);
+                this.visitConditional(cond.alternate,parentId);
             } else {
                 this.buf.push('else {');
                 this.visit(cond.alternate, parentId);
