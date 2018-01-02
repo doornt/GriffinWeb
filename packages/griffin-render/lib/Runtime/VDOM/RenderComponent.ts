@@ -1,11 +1,12 @@
-import {IPugNode, IPugAttr} from "../../Interface/INode"
+// import {IPugNode, IPugAttr} from "../../Interface/INode"
 import { TaskManager } from "../Bridge/TaskManager";
 import { ETaskType, EViewTask, ITaskEvent } from "../Interface/Task";
 import { generateID } from "../../Utils/NodeID";
+import { IDOMAtrr } from "../../Interface/INode";
 
 export abstract class RenderComponent{
 
-    protected $attrs:Array<IPugAttr>
+    protected $attrs:Array<IDOMAtrr>
 
     protected $children:Array<RenderComponent> = []
 
@@ -13,7 +14,7 @@ export abstract class RenderComponent{
 
     protected $instanceId:string = null
 
-    constructor(attrs:Array<IPugAttr>,styles:any){
+    constructor(attrs:Array<IDOMAtrr>,styles:any){
         this.$attrs = attrs ||  []
         this.parseAttrs()
         for(let k in styles){

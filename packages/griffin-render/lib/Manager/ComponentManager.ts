@@ -1,4 +1,4 @@
-import { IPugAttr } from "../Interface/INode";
+import { IDOMAtrr } from "../Interface/INode";
 
 export class ComponentManager{
 
@@ -19,7 +19,7 @@ export class ComponentManager{
         this._registeredClass[name] = ctr
     }
 
-    public createViewByTag(tag:string,attrs:Array<IPugAttr>,styles){
+    public createViewByTag(tag:string,attrs:Array<IDOMAtrr>,styles){
         let T = this._registeredClass[tag]
         if(!T){
             console.warn("unsupported tag",tag)

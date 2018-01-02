@@ -5,19 +5,20 @@
 // }
 
 var postcss = require("postcss")
+var gen = require("./generate-code")
+
 
 module.exports =  function loader(content){
     this.cacheable && this.cacheable();
     content = require('./compiler').compile(content)
     let styles = content.nodes.filter(node=>node.name == "style")
-    let htmls = content.nodes.filter(node=>node.name != "style")
+    let AstFunc = gen(content)
+
     let strs = styles.map(node=>{
         return node.block.nodes.map(n=>n.val).join('')
     })
     let styleStr = strs.join('\n')
-    // let res = processCss(styleStr,null,{query:{}},(err,result)=>{
-    //     console.error(result)
-    // })
+  
     let styleJson = postcss.parse(strs).nodes.map(node=>{
         let attrs = {}
         node.nodes.map(n=>{
@@ -28,10 +29,12 @@ module.exports =  function loader(content){
             attrs:attrs
         }
     })
-    let res ={
-        htmls,
-        styles:styleJson
-    }
-    this.value = res;
-    return "module.exports = " + JSON.stringify(res);
+
+    let styleRuntime = 'let styleJson = ' + JSON.stringify(styleJson) + ';'
+    let AstFuncRuntime = 'let AstFuncStr = ' + AstFunc;
+
+    let runtime = ";let res = {style:styleJson,AstFunc:AstFuncStr}"
+   
+    // this.value = res;
+    return styleRuntime + AstFuncRuntime + runtime + ";module.exports = res;";
 }

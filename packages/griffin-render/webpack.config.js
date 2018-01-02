@@ -8,6 +8,7 @@ module.exports = env =>{
     }
 
     return {
+        devtool: 'eval-source-map',
         entry: './test/index.js',
         output: {
             path: output,

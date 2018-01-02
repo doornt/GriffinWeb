@@ -1,22 +1,22 @@
-import {IPugBlock, IPugNode, IPugConditional, IPugText, IStyle} from "../Interface/INode"
+import {IDOMNode, IStyle} from "../Interface/INode"
 import { ComponentManager } from "./ComponentManager";
 
 export class DOMAstManager{
 
-    private $ast:IPugBlock
-    private $inputData = {}
+    private $nodes:Array<IDOMNode>
+    private $locals = {}
     private $styles:Array<IStyle>
 
-    constructor(ast:IPugBlock,styles:any){
-        this.$ast = ast
+    constructor(nodes:Array<IDOMNode>,styles:any){
+        this.$nodes = nodes
         this.$styles = styles
     }
 
     compile(data){
-        this.$inputData = data || {}
+        this.$locals = data || {}
 
         let children = []
-        for(let node of this.$ast.nodes){
+        for(let node of this.$nodes){
             children.push(this.$visitNode(node))
         }
 
@@ -24,20 +24,19 @@ export class DOMAstManager{
         
     }
 
-    private $visitNode(node:IPugNode|IPugConditional|IPugBlock|IPugText){
+    private $visitNode(node:IDOMNode){
         let view = null
-        switch(node.type){
-            case "block":
-                view = this.$visitBlock(node as IPugBlock)
-            break
-            case "Text":
-                view = this.$visitText(node as IPugText)
+        switch(node.name){
+            // case "block":
+            //     view = this.$visitBlock(node as IPugBlock)
+            // break
+            case "text":
+                view = this.$visitText(node)
             break
             default:
-                view = this.$visitTag(node as IPugNode)
-                let block = (<IPugNode>node).block
-                if(block){
-                    let children = new DOMAstManager(block,this.$styles).compile(this.$inputData)
+                view = this.$visitTag(node)
+                if(node.children){
+                    let children = new DOMAstManager(node.children,this.$styles).compile(this.$locals)
                     for(let child of children){
                         view.addChild(child)
                     }
@@ -47,35 +46,33 @@ export class DOMAstManager{
         return view
     }
 
-    private $visitBlock(node:IPugBlock){
 
+    private $visitText(node:IDOMNode){
+        node.attributes = node.attributes || []
+        node.attributes.push({name:"text",val:node.val})
+        return ComponentManager.instance.createViewByTag("text",node.attributes,{})
     }
 
-    private $visitText(node:IPugText){
-        node.attrs = node.attrs || []
-        node.attrs.push({name:"text",val:node.val})
-        return ComponentManager.instance.createViewByTag("text",node.attrs,{})
-    }
-
-    private $visitTag(node:IPugNode){
+    private $visitTag(node:IDOMNode){
         let view = null
         let styles = {}
-        node.attrs = node.attrs.map(attr=>{
+        node.attributes = node.attributes.map(attr=>{
             return {
                 name:attr.name,
-                val:attr.val.replace(/\"/g,"").replace(/\'/g,"")
+                val:attr.val
             }
         })
-        let list = node.attrs.filter(o=>o.name == "class")
+        let list = node.attributes.filter(o=>o.name == "class")
         for(let l of list){
             let ss  = this.$styles.filter(s=>s.selector == "." + l.val)
             for(let s of ss){
                 styles = Object.assign(styles,s.attrs)
             }
         }
+        debugger
         switch(node.name){
             default:
-                view = ComponentManager.instance.createViewByTag(node.name,node.attrs,styles)
+                view = ComponentManager.instance.createViewByTag(node.name,node.attributes,styles)
             break
         }
         return view

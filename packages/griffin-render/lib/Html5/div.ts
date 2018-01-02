@@ -1,9 +1,8 @@
 import { RenderComponent ,ETaskType ,TaskManager,ITaskEvent,EViewTask} from "../Runtime/export";
-import { IPugAttr } from "../Interface/INode";
 
 export class Div extends RenderComponent{
 
-    constructor(attrs:Array<IPugAttr>,styles){
+    constructor(attrs:any,styles){
         super(attrs,styles)
     }
 

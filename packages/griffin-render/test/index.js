@@ -8,9 +8,6 @@ class TestAComponent extends BaseComponent{
         super(pugJson)
     }
 
-    render(){
-        console.error(this.ast)
-    }
 }
 
 launchWithComponent(new TestAComponent())

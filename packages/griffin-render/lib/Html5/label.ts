@@ -1,5 +1,3 @@
-import { IPugAttr } from "../Interface/INode";
-
 import { RenderComponent ,ETaskType ,TaskManager,ITaskEvent,EViewTask} from "../Runtime/export";
 
 
@@ -7,7 +5,7 @@ export class Label extends RenderComponent{
 
     private $text = ""
 
-    constructor(attrs:Array<IPugAttr>,styles){
+    constructor(attrs:any,styles){
        super(attrs,styles)
     }
 

@@ -1,5 +1,5 @@
 
-import {IPugNode, IPugBlock, IStyle} from "../Interface/INode"
+// import {IPugNode, IPugBlock, IStyle} from "../Interface/INode"
 import {ComponentManager} from "../Manager/ComponentManager"
 import {DOMAstManager} from "../Manager/DOMAstManager"
 import { generateID } from "../Utils/NodeID";
@@ -7,19 +7,26 @@ import { RenderComponent } from "../Runtime/VDOM/RenderComponent";
 
 export class BaseComponent{
 
-    private $ast:DOMAstManager
+    private $ast:Function
 
     private $view:RenderComponent
 
+    protected $styles:any
+
     constructor(pugJson:any){
-        this.$ast = new DOMAstManager({nodes:pugJson.htmls,type:"block"},pugJson.styles)
-        this.$rebuildAst()
+        this.$ast = pugJson.AstFunc
+        this.$styles = pugJson.style
         this.init()
-        this.viewDidLoad()
+        this.$render()
+    }
+
+    $render(){
+        this.$rebuildAst()
     }
 
     $rebuildAst(){
-        let children = this.$ast.compile({})
+        let compileJson = this.$ast({})
+        let children = new DOMAstManager(compileJson,this.$styles).compile({})
         if(children.length == 1 ){
             this.$view = children[0]
         }else{
@@ -37,12 +44,7 @@ export class BaseComponent{
     }
 
     init(){
-        // this.$renders = this.$nodes.map(node=>{
-        //     return new RenderComponent(node)
-        // })
-
         console.log(global)
-
         setTimeout(() => {
             console.log("timeout")
         }, 1000);
