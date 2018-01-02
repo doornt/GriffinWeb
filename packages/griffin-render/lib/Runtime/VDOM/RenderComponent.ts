@@ -30,7 +30,17 @@ export abstract class RenderComponent{
     }
 
     protected parseAttrs(){
-        
+        for(let attr of this.$attrs){
+            switch(attr.name){
+                case "width":
+                case "height":
+                case "left":
+                case "top":
+                    let n = parseInt(attr.val)
+                    this.$styles[attr.name] = n
+                break
+            }
+        }
     }
 
 

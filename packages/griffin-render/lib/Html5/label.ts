@@ -10,6 +10,7 @@ export class Label extends RenderComponent{
     }
 
     protected parseAttrs(){
+        super.parseAttrs()
         for(let attr of this.$attrs){
             switch(attr.name){
                 case "text":

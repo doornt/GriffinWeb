@@ -25,9 +25,8 @@ export class BaseComponent{
     }
 
     $rebuildAst(){
-        let compileJson = this.$ast({test:true})
+        let compileJson = this.$ast({test:true,list:[1,2,3,4]})
         let children = new DOMAstManager(compileJson,this.$styles).compile()
-        debugger
         if(children.length == 1 ){
             this.$view = children[0]
         }else{

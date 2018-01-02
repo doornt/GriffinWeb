@@ -13,12 +13,13 @@ var walk = require('acorn/dist/walk');
 
 class Generate {
 
+
     bufferChildren(parentId) {
-        this.buffer.push(`if(${!!parentId} && idMap["${parentId}"]){`)
-        this.buffer.push(`idMap["${parentId}"].children = idMap["${parentId}"].children || []`)
-        this.buffer.push(`idMap["${parentId}"].children.push(n)`)
-        this.buffer.push(`n.parentId = "${parentId}"`)
-        this.buffer.push(`}`)
+        this.buf.push(`if(${!!parentId} && idMap["${parentId}"]){`)
+        this.buf.push(`idMap["${parentId}"].children = idMap["${parentId}"].children || []`)
+        this.buf.push(`idMap["${parentId}"].children.push(n)`)
+        this.buf.push(`n.parentId = "${parentId}"`)
+        this.buf.push(`}`)
     }
 
     visit(node, parentId = null) {
@@ -41,25 +42,27 @@ class Generate {
 
     constructor(ast) {
         this.ast = ast
-        this.buffer = []
+        this.buf = []
     }
 
     compile() {
 
-        let exclude = ["Object","idMap","n"]
+        let exclude = ["Object", "idMap", "n"]
         this.visit(this.ast)
-        this.buffer.push(`let res = Object.keys(idMap).map(key=>idMap[key]).filter(obj=>!obj.parentId);\nreturn res;
+        this.buf.push(`let res = Object.keys(idMap).map(key=>idMap[key]).filter(obj=>!obj.parentId);\nreturn res;
         `)
-        let js = this.buffer.join(';\n')
+        let js = this.buf.join(';\n')
 
-        var vars = detect(js).map(function (global) { return global.name; })
-        .filter(function (v) {
-          return exclude.indexOf(v) === -1
-            && v !== 'undefined'
-            && v !== 'this'
-        })
+        var vars = detect(js).map(function (global) {
+                return global.name;
+            })
+            .filter(function (v) {
+                return exclude.indexOf(v) === -1 &&
+                    v !== 'undefined' &&
+                    v !== 'this'
+            })
 
-        let runtimeJs = `function template({${vars.join(',')}}) {var n = "", idMap = {};` + js + ";}";
+        let runtimeJs = `function template({${vars.join(',')}}) {var n = "",attrs=[], idMap = {};` + js + ";}";
 
         return runtimeJs
     }
@@ -79,15 +82,14 @@ class Generate {
             id: `${uuid()}`
         }
         let attributes = []
-        for (let attr of tag.attrs) {
-            attributes.push({
-                name: attr.name,
-                val: attr.val.replace(/\"/g, "").replace(/\'/g, "")
-            })
-        }
         node.attributes = attributes
-        this.buffer.push(`n = ${JSON.stringify(node)}`)
-        this.buffer.push(`idMap["${node.id}"] = n `)
+        this.buf.push(`n = ${JSON.stringify(node)}`)
+        this.buf.push("attrs=[]")
+        for (let attr of tag.attrs) {
+            this.buf.push(`attrs.push({name: "${attr.name}",val: ${attr.val}})`)
+        }
+        this.buf.push(`n.attributes = attrs`)
+        this.buf.push(`idMap["${node.id}"] = n `)
         this.bufferChildren(parentId)
         if (!tag.selfClosing) {
             this.visit(tag.block, node.id);
@@ -100,26 +102,91 @@ class Generate {
             val: text.val,
             id: `${uuid()}`
         }
-        this.buffer.push(`n = ${JSON.stringify(node)}`)
+        this.buf.push(`n = ${JSON.stringify(node)}`)
         this.bufferChildren(parentId)
     }
 
-    visitConditional(cond,parentId) {
+    visitConditional(cond, parentId) {
         var test = cond.test;
-        this.buffer.push('if (' + test + ') {');
+        this.buf.push('if (' + test + ') {');
         this.visit(cond.consequent, parentId);
-        this.buffer.push('}')
+        this.buf.push('}')
         if (cond.alternate) {
             if (cond.alternate.type === 'Conditional') {
-                this.buffer.push('else')
+                this.buf.push('else')
                 this.visitConditional(cond.alternate);
             } else {
-                this.buffer.push('else {');
+                this.buf.push('else {');
                 this.visit(cond.alternate, parentId);
-                this.buffer.push('}');
+                this.buf.push('}');
             }
         }
     }
+
+    visitEach(each, parentId) {
+        var indexVarName = each.key || 'pug_index' + this.eachCount;
+        this.eachCount++;
+
+        this.buf.push('' +
+            '// iterate ' + each.obj + '\n' +
+            ';(function(){\n' +
+            '  var $$obj = ' + each.obj + ';\n' +
+            '  if (\'number\' == typeof $$obj.length) {');
+
+        if (each.alternate) {
+            this.buf.push('    if ($$obj.length) {');
+        }
+
+        this.buf.push('' +
+            '      for (var ' + indexVarName + ' = 0, $$l = $$obj.length; ' + indexVarName + ' < $$l; ' + indexVarName + '++) {\n' +
+            '        var ' + each.val + ' = $$obj[' + indexVarName + '];');
+
+        this.visit(each.block, parentId);
+
+        this.buf.push('      }');
+
+        if (each.alternate) {
+            this.buf.push('    } else {');
+            this.visit(each.alternate, parentId);
+            this.buf.push('    }');
+        }
+
+        this.buf.push('' +
+            '  } else {\n' +
+            '    var $$l = 0;\n' +
+            '    for (var ' + indexVarName + ' in $$obj) {\n' +
+            '      $$l++;\n' +
+            '      var ' + each.val + ' = $$obj[' + indexVarName + '];');
+
+        this.visit(each.block, parentId);
+
+        this.buf.push('    }');
+        if (each.alternate) {
+            this.buf.push('    if ($$l === 0) {');
+            this.visit(each.alternate, parentId);
+            this.buf.push('    }');
+        }
+        this.buf.push('  }\n}).call(this);\n');
+    }
+
+    visitAttributes(attrs,attributeBlocks){
+        if (attrs.length) {
+            // this.attrs(attrs);
+        }
+    }
+
+    // attrs(attrs, buffer) {
+    //     var res = compileAttrs(attrs, {
+    //         terse: true,
+    //         format: buffer ? 'html' : 'object',
+    //         runtime: this.runtime.bind(this)
+    //     });
+    //     if (buffer) {
+    //         this.bufferExpression(res);
+    //     }
+    //     return res;
+    // }
+
 
 }
 
