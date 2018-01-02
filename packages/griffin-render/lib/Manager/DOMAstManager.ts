@@ -12,9 +12,7 @@ export class DOMAstManager{
         this.$styles = styles
     }
 
-    compile(data){
-        this.$locals = data || {}
-
+    compile(){
         let children = []
         for(let node of this.$nodes){
             children.push(this.$visitNode(node))
@@ -36,7 +34,7 @@ export class DOMAstManager{
             default:
                 view = this.$visitTag(node)
                 if(node.children){
-                    let children = new DOMAstManager(node.children,this.$styles).compile(this.$locals)
+                    let children = new DOMAstManager(node.children,this.$styles).compile()
                     for(let child of children){
                         view.addChild(child)
                     }
@@ -69,7 +67,6 @@ export class DOMAstManager{
                 styles = Object.assign(styles,s.attrs)
             }
         }
-        debugger
         switch(node.name){
             default:
                 view = ComponentManager.instance.createViewByTag(node.name,node.attributes,styles)
