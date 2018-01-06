@@ -9,8 +9,7 @@ export class Div extends RenderComponent{
     public createView(){
         TaskManager.instance.send(ETaskType.VIEW,<ITaskEvent>{
             action:EViewTask.CREATE_VIEW,
-            nodeId:this.id,
-            data:this.$styles
+            createData:{nodeId:this.id,styles:this.$styles,type:"div"}
         })
     }
 

@@ -24,9 +24,8 @@ export class Label extends RenderComponent{
         let data = Object.create(this.$styles)
         data.text = this.$text
         TaskManager.instance.send(ETaskType.VIEW,<ITaskEvent>{
-            action:EViewTask.CREATE_LABEL,
-            nodeId:this.id,
-            data:data
+            action:EViewTask.CREATE_VIEW,
+            createData:{nodeId:this.id,styles:data,type:"label"}
         })
     }
 }

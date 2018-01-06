@@ -8,7 +8,7 @@ export class RootView{
 
     private constructor(){
         this.$instanceId = generateID()
-        TaskManager.instance.send(ETaskType.ROOT,<ITaskEvent>{nodeId:this.$instanceId})
+        TaskManager.instance.send(ETaskType.ROOT,{createRootData:{nodeId:this.$instanceId}})
     }
 
     public get id(){

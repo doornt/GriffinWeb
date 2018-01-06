@@ -1,4 +1,4 @@
-import { ETaskType, ITaskEvent, EViewTask } from "../Interface/Task";
+import { ETaskType, ITaskEvent, EViewTask, ICreateData } from "../Interface/Task";
 
 declare var global:{
     [k:string]:any
@@ -29,7 +29,7 @@ export class TaskManager{
                 this.$sendView(e)
             break
             case ETaskType.ROOT:
-                this.$createRoot(e.nodeId)
+                this.$createRoot(e.createRootData.nodeId)
             break
         }
     }
@@ -38,39 +38,27 @@ export class TaskManager{
        
         switch(e.action){
             case EViewTask.CREATE_VIEW:
-                this.$createView(e.nodeId,e.data)
+                this.$createView(e.createData)
             break
-            case EViewTask.CREATE_LABEL:
-                this.$createText(e.nodeId,e.data)
-            break
+
             case EViewTask.ADD_SUBVIEW:
-                this.$addSubview(e.parentId,e.nodeId)
+                this.$addSubview(e.addSubviewData)
             break
-            case EViewTask.ADD_CHILD:
-                this.$addChild(e.parentId || e.nodeId,e.data)
-            break
+         
             default:
             break
         }
     }
 
-    private $createView(selfId:string,attr:any){
-        console.log("createView call:" ,selfId, JSON.stringify(attr))
-        return global.createView(selfId,attr)
+    private $createView(data:ICreateData){
+        console.log("createView call:" ,data.nodeId, JSON.stringify(data.styles))
+        return global.addElement(data.nodeId,data.parentId,data.styles)
     }
 
-    private $createText(selfId:string,attr:any){
-        console.log("createText call:" ,selfId, JSON.stringify(attr))
-        return global.createLabel(selfId,attr)
-    }
 
-    private $addChild(parentId:string,childAttr:any){
-        return global.$addChild && global.$addChild(parentId,childAttr)
-    }
-
-    private $addSubview(parentId:string,childId:string){
-        console.log("addSubview call:",parentId,childId)
-        return global.addSubview(parentId,childId)
+    private $addSubview({parentId,nodeId}){
+        console.log("addSubview call:",parentId,nodeId)
+        return global.addSubview(parentId,nodeId)
     }
 
     private $createRoot(nodeId:string){

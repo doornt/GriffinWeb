@@ -57,9 +57,7 @@ export abstract class RenderComponent{
         this.$children.push(child)
         TaskManager.instance.send(ETaskType.VIEW,{
             action:EViewTask.ADD_SUBVIEW,
-            parentId:this.id,
-            nodeId:child.id,
-            data:null
+            addSubviewData:{nodeId:child.id,parentId:this.id}
         })
     }
 
