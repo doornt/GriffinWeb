@@ -65,8 +65,8 @@ export abstract class RenderComponent{
         switch(k){
             case "width":
             case "height":
-            case "left":
-            case "top":
+            case "margin-left":
+            case "margin-top":
                 let n = parseInt(v)
                 this.$styles[k] = n
             break

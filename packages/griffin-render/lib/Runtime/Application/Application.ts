@@ -32,9 +32,8 @@ export class Application{
 
     public runWithModule(view:BaseComponent){
         TaskManager.instance.send(ETaskType.VIEW,<ITaskEvent>{
-            parentId:this.$root.id,
-            nodeId:view.id,
-            action:EViewTask.ADD_SUBVIEW
+            action:EViewTask.ADD_SUBVIEW,
+            addSubviewData:{parentId:this.$root.id,nodeId:view.id}
         })
     }
 }
