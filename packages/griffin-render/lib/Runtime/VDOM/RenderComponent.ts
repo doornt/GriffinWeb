@@ -62,17 +62,18 @@ export abstract class RenderComponent{
     }
 
     protected $buildStyle(k,v){
-        switch(k){
-            case "width":
-            case "height":
-            case "margin-left":
-            case "margin-top":
-                let n = parseInt(v)
-                this.$styles[k] = n
-            break
-            default:
-                this.$styles[k] = v
-        }
+        this.$styles[k] = isNaN(v)?v:+v
+        // switch(k){
+        //     case "width":
+        //     case "height":
+        //     case "margin-left":
+        //     case "margin-top":
+        //         let n = parseInt(v)
+        //         this.$styles[k] = n
+        //     break
+        //     default:
+        //         this.$styles[k] = v
+        // }
 
     }
 
