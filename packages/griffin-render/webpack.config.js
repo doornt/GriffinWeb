@@ -4,7 +4,7 @@ let output = path.resolve(__dirname, 'dist')
 module.exports = env =>{
 
     if(env && env.NODE_ENV == "xcode"){
-        output = path.resolve(__dirname,"../../../griffin/ios/Griffin/Griffin")
+        output = path.resolve(__dirname,"../../../griffin/ios/Example/GriffinSDK")
     }
 
     return {
