@@ -7,6 +7,7 @@ export class Label extends RenderComponent {
 
     constructor(attrs: any, styles) {
         super(attrs, styles)
+        console.log('la', styles)
     }
 
     protected parseAttrs() {
@@ -21,9 +22,7 @@ export class Label extends RenderComponent {
     }
 
     protected createView() {
-        let data = Object.create(this.$styles)
-        console.log('s10', data)
-        data.text = this.$text
+        let data = Object.assign(this.$styles, {text: this.$text})
         TaskManager.instance.send(ETaskType.VIEW, <ITaskEvent>{
             action: EViewTask.CREATE_VIEW,
             createData: { nodeId: this.id, styles: data, type: "label" }

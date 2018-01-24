@@ -6,8 +6,12 @@ export class DOMAstManager {
     private $nodes: Array<IDOMNode>
     private $locals = {}
     private $styles: Array<IStyle>
+    private static $rootNodes: Array<IDOMNode>
 
     constructor(nodes: Array<IDOMNode>, styles: any) {
+        if (!DOMAstManager.$rootNodes) {
+            DOMAstManager.$rootNodes = nodes
+        }
         this.$nodes = nodes
         this.$styles = styles
     }
@@ -44,23 +48,43 @@ export class DOMAstManager {
         return view
     }
 
+    private $findParentNode(nodeId: string, rootNodeArray: Array<IDOMNode>) {
+        for (let node of rootNodeArray) {
+            if (node.id === nodeId) {
+                return node
+            }
+            if (node.children) {
+                for (let subNode of node.children) {
+                    return this.$findParentNode(nodeId, node.children)
+                }
+            }
+        }
+        return null
+    }
 
     private $visitText(node: IDOMNode) {
         let styles = {}
 
-
-        console.log('s3', this.$styles)
-        // for (let l of list) {
-        //     let ss = this.$styles.filter(s => s.selector == "." + l.val)
-        //     for (let s of ss) {
-        //         console.log('s4', s.attrs)
-        //         styles = Object.assign(styles, s.attrs)
-        //     }
-        // }
-
+        let parentNode = this.$findParentNode(node.parentId, DOMAstManager.$rootNodes)
+        if (parentNode) {
+            node.attributes = parentNode.attributes
+            node.attributes = node.attributes.map(attr => {
+                return {
+                    name: attr.name,
+                    val: attr.val
+                }
+            })
+            let list = node.attributes.filter(o => o.name == "class")
+            for (let l of list) {
+                let ss = this.$styles.filter(s => s.selector == "." + l.val)
+                for (let s of ss) {
+                    styles = Object.assign(styles, s.attrs)
+                }
+            }
+        }
         node.attributes = node.attributes || []
         node.attributes.push({ name: "text", val: node.val })
-        console.log('s5', node.attributes)
+
         return ComponentManager.instance.createViewByTag("text", node.attributes, styles)
     }
 

@@ -20,6 +20,7 @@ export abstract class RenderComponent{
         for(let k in styles){
             this.$buildStyle(k,styles[k])
         }
+        console.log('dd', this.$styles)
         this.$instanceId = generateID()
         this.createView()
 
