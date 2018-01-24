@@ -1,58 +1,55 @@
 
 // import {IPugNode, IPugBlock, IStyle} from "../Interface/INode"
-import {ComponentManager} from "../Manager/ComponentManager"
-import {DOMAstManager} from "../Manager/DOMAstManager"
+import { ComponentManager } from "../Manager/ComponentManager"
+import { DOMAstManager } from "../Manager/DOMAstManager"
 import { generateID } from "../Utils/NodeID";
 import { RenderComponent } from "../Runtime/VDOM/RenderComponent";
 
-export class BaseComponent{
+export class BaseComponent {
 
-    private $ast:Function
+    private $ast: Function
 
-    private $view:RenderComponent
+    private $view: RenderComponent
 
-    protected $styles:any
+    protected $styles: any
 
-    constructor(pugJson:any){
+    constructor(pugJson: any) {
         this.$ast = pugJson.AstFunc
         this.$styles = pugJson.style
         this.init()
         this.$render()
     }
 
-    $render(){
+    $render() {
         this.$rebuildAst()
     }
 
-    $rebuildAst(){
-        let compileJson = this.$ast({test:true,list:[1,2,3,4]})
-        let children = new DOMAstManager(compileJson,this.$styles).compile()
-        if(children.length == 1 ){
+    $rebuildAst() {
+        let compileJson = this.$ast({ test: true, list: [1, 2, 3, 4] })
+        console.log('jj', JSON.stringify(compileJson))
+        let children = new DOMAstManager(compileJson, this.$styles).compile()
+        if (children.length == 1) {
             this.$view = children[0]
-        }else{
-            this.$view = ComponentManager.instance.createViewByTag("div",[],{})
-            for(let child of children){
+        } else {
+            this.$view = ComponentManager.instance.createViewByTag("div", [], {})
+            for (let child of children) {
                 this.$view.addChild(child)
             }
         }
     }
-    
 
 
-    public get id(){
+
+    public get id() {
         return this.$view.id
     }
 
-    init(){
-        console.log(global)
-        setTimeout(() => {
-            console.log("timeout")
-        }, 1000);
+    init() {
     }
 
-    viewDidLoad(){
+    viewDidLoad() {
         // this.$renders.map(item=>item.$render())
     }
 
-    
+
 }

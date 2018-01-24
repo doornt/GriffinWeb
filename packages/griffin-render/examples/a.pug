@@ -1,16 +1,40 @@
 style.
-    .nav {
+    .header {
         height: 64;
-        background-color: #0000ff;
+        background-color: #00a3ed;
+        display: flex;
+        flex-direction: column;
+    }
+    .nav {
+        margin-top: 20;
+        height: 44;
         display: flex;
         flex-direction: row;
-        justify-content: space-between;
         align-items: center;
     }
+    .left-item {
+        height:20;
+        width:20;
+        margin-left:15;
+    }
+    .title {
+        color: #ffffff;
+        font-size: 18;
+        margin-left: 20;
+    }
+    .right-item {
+        height:20;
+        width:20;
+        margin-right: 20;
+    }
+    .space {
+        flex-grow: 1;
+    }
 
-
-
-.nav
-    .left-items 左bian 
-    .title 首页123
-    .right-items 右
+.header
+    .nav
+        img.left-item(src="https://www.dpfile.com/ugc/shortvideo/floor2/shareIcon.png")
+        .title 首页
+        .space
+        img.right-item(src="https://www.dpfile.com/ugc/shortvideo/floor2/shareIcon.png")
+        img.right-item(src="https://www.dpfile.com/ugc/shortvideo/floor2/shareIcon.png")
