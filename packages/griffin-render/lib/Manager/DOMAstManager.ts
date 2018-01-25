@@ -54,9 +54,7 @@ export class DOMAstManager {
                 return node
             }
             if (node.children) {
-                for (let subNode of node.children) {
-                    return this.$findParentNode(nodeId, node.children)
-                }
+                return this.$findParentNode(nodeId, node.children)
             }
         }
         return null
