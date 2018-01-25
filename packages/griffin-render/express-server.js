@@ -9,22 +9,23 @@ function getFileContent(string) {
     return fs.readFileSync(string, 'utf-8');
 }
 
-app.get('/', function (req, res, next) {
+app.use(function (req, res, next) {
     if (req.query.isFirst === "1") {
         let bundleContent = getFileContent("./dist/bundle.js");
         res.json({ data: bundleContent })
     } else {
-        next()
+        eventEmitter.on('fileChanged', function () {
+            next()
+        });
     }
+});
+
+app.get('/', function (req, res, next) {
+    let bundleContent = getFileContent("./dist/bundle.js");
+    res.json({ data: bundleContent })
 })
 
-app.use(function (req, res, next) {
-    eventEmitter.on('fileChanged', function () {
-        console.log('Begin Response')
-        let bundleContent = getFileContent("./dist/bundle.js");
-        res.json({ data: bundleContent })
-    });
-});
+
 
 let server = app.listen(8081, function () {
 
