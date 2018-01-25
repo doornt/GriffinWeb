@@ -3,6 +3,7 @@ const ts = require('gulp-typescript');
 const tsp = ts.createProject('tsconfig.json');
 const webpack = require("webpack");
 const webpackConfig = require("./webpack.config.js");
+const cp = require('child_process');
 
 const PATHS = {
     scripts: ['./lib/**/*.ts', './examples/**/*.pug'],
@@ -29,4 +30,12 @@ gulp.task('watch-ts', ['build-ts'], function () {
     gulp.watch(PATHS.scripts, ['webpack']);
 });
 
-gulp.task('dev', ['webpack', 'watch-ts']);
+gulp.task('server', function () {
+    cp.exec('node ./express-server.js', function (err, stdout, stderr) {
+        console.log(stdout);
+        console.log(stderr);
+        cb(err);
+      });
+});
+
+gulp.task('dev', ['server','webpack', 'watch-ts']);
