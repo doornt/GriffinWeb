@@ -25,7 +25,7 @@ export class BaseComponent {
     }
 
     $rebuildAst() {
-        let compileJson = this.$ast({ test: true, list: [1, 2, 3, 4] })
+        let compileJson = this.$ast({ test: true, list: [1, 2, 3, 4, 5] })
         console.log('jj', JSON.stringify(compileJson))
         let children = new DOMAstManager(compileJson, this.$styles).compile()
         if (children.length == 1) {

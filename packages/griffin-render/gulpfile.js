@@ -11,7 +11,7 @@ const PATHS = {
 
 gulp.task('webpack', ['build-ts'], (cb) => {
     "use strict";
-    webpack(webpackConfig({ NODE_ENV: "xcode" })).run((err, stats) => {
+    webpack(webpackConfig({})).run((err, stats) => {
         if (err) {
             console.log("webpack failed")
         }
