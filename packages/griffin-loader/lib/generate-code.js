@@ -54,8 +54,8 @@ class Generate {
         let js = this.buf.join(';\n')
 
         var vars = detect(js).map(function (global) {
-                return global.name;
-            })
+            return global.name;
+        })
             .filter(function (v) {
                 return exclude.indexOf(v) === -1 &&
                     v !== 'undefined' &&
@@ -103,6 +103,9 @@ class Generate {
             id: `${uuid()}`
         }
         this.buf.push(`n = ${JSON.stringify(node)}`)
+        // get attrs from parent
+        this.buf.push(`n.attributes = idMap["${parentId}"].attributes`)
+
         this.bufferChildren(parentId)
     }
 
@@ -114,7 +117,7 @@ class Generate {
         if (cond.alternate) {
             if (cond.alternate.type === 'Conditional') {
                 this.buf.push('else')
-                this.visitConditional(cond.alternate,parentId);
+                this.visitConditional(cond.alternate, parentId);
             } else {
                 this.buf.push('else {');
                 this.visit(cond.alternate, parentId);
@@ -169,7 +172,7 @@ class Generate {
         this.buf.push('  }\n}).call(this);\n');
     }
 
-    visitAttributes(attrs,attributeBlocks){
+    visitAttributes(attrs, attributeBlocks) {
         if (attrs.length) {
             // this.attrs(attrs);
         }

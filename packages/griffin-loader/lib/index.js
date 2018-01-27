@@ -33,7 +33,7 @@ module.exports = function loader(content) {
     let styleRuntime = 'let styleJson = ' + JSON.stringify(styleJson) + ';'
     let AstFuncRuntime = 'let AstFuncStr = ' + AstFunc;
     let runtime = ";let res = {style:styleJson,AstFunc:AstFuncStr}"
-
+    console.log('asrfun', AstFuncRuntime)
     // this.value = res;
     return styleRuntime + AstFuncRuntime + runtime + ";module.exports = res;";
 }

@@ -34,8 +34,7 @@ gulp.task('server', function () {
     cp.exec('node ./express-server.js', function (err, stdout, stderr) {
         console.log(stdout);
         console.log(stderr);
-        cb(err);
-      });
+    });
 });
 
-gulp.task('dev', ['server','webpack', 'watch-ts']);
+gulp.task('dev', ['server', 'webpack', 'watch-ts']);
