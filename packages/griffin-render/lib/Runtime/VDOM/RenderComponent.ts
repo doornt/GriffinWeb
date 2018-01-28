@@ -82,4 +82,10 @@ export abstract class RenderComponent {
 
     }
 
+    public eventHandler(type: string) {
+        if (type === "click") {
+            return this.$click
+        }
+        return null
+    }
 }

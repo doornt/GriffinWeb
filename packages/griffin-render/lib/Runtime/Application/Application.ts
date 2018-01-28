@@ -5,6 +5,7 @@ import { RootView } from "../VDOM/RootView";
 import { ETaskType, ITaskEvent, EViewTask } from "../Interface/Task";
 import * as Html5 from "../../Html5/index"
 import { RenderComponent } from "../VDOM/RenderComponent";
+import { NativeEvent } from "../Interface/NativeEvent";
 
 export class Application {
     private static $inst = null
@@ -41,5 +42,13 @@ export class Application {
 
     public registerView(view: RenderComponent) {
         this.$root.registerView(view)
+    }
+
+    public handleEventFromNative(rootviewId: string, event: NativeEvent) {
+        if (rootviewId !== this.$root.id) {
+            return
+        }
+        console.log("application", JSON.stringify(event))
+        this.$root.handleEventFromNative(event)
     }
 }
