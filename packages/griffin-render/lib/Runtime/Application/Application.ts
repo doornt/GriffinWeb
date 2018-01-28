@@ -48,7 +48,6 @@ export class Application {
         if (rootviewId !== this.$root.id) {
             return
         }
-        console.log("application", JSON.stringify(event))
         this.$root.handleEventFromNative(event)
     }
 }

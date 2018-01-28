@@ -9,7 +9,12 @@ class TestAComponent extends BaseComponent {
     }
 
     clickclick() {
-        console.log('clickclickclickclickclickclick')
+        global.navigator.push({
+            url: 'http://dotwe.org/raw/dist/519962541fcf6acd911986357ad9c2ed.js',
+            animated: true
+        }, event => {
+            modal.toast({ message: 'callback: ' + event })
+        })
     }
 }
 
