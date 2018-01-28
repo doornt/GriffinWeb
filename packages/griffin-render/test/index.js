@@ -8,6 +8,9 @@ class TestAComponent extends BaseComponent {
         super(pugJson)
     }
 
+    clickclick() {
+        console.log('clickclickclickclickclickclick')
+    }
 }
 
 launchWithComponent(new TestAComponent())

@@ -21,8 +21,7 @@ export class ImageView extends RenderComponent {
     }
 
     protected createView() {
-        let data = Object.create(this.$styles)
-        data.url = this.$url
+        let data = Object.assign(this.$styles, { url: this.$url, click: this.$click })
         TaskManager.instance.send(ETaskType.VIEW, <ITaskEvent>{
             action: EViewTask.CREATE_VIEW,
             createData: { nodeId: this.id, styles: data, type: "img" }

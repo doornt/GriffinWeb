@@ -103,10 +103,23 @@ class Generate {
             id: `${uuid()}`
         }
         this.buf.push(`n = ${JSON.stringify(node)}`)
-        // get attrs from parent
+        // get attributes from parent exclude layout attributes
         this.buf.push(`n.attributes = idMap["${parentId}"].attributes`)
 
         this.bufferChildren(parentId)
+
+        // remove parent node... maybe has bug here
+        this.buf.push(`var parent_node = idMap["${parentId}"]`)
+        this.buf.push(`if(parent_node.parentId && idMap[parent_node.parentId]){`)
+        this.buf.push(`idMap[parent_node.parentId].children = idMap[parent_node.parentId].children.filter((child)=>{
+            child.id !== "${parentId}"
+        })`)
+        this.buf.push(`idMap[parent_node.parentId].children.push(n)`)
+        this.buf.push(`} else {`)
+        this.buf.push(`idMap["${node.id}"] = n`)
+        this.buf.push(`}`)
+        this.buf.push(`n.parentId = parent_node.parentId`)
+        this.buf.push(`delete idMap["${parentId}"]`)
     }
 
     visitConditional(cond, parentId) {

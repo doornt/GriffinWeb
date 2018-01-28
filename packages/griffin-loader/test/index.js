@@ -8,7 +8,7 @@ var str = require('fs').readFileSync(filename, 'utf8')
 
 
 let res = loader(str)
-console.log(res)
+console.log(res.AstFunc({}))
 // require('./b.js')
 
 // var pug = require('pug')

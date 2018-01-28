@@ -7,7 +7,6 @@ export class Label extends RenderComponent {
 
     constructor(attrs: any, styles) {
         super(attrs, styles)
-        console.log("label", JSON.stringify(attrs), JSON.stringify(styles))
     }
 
     protected parseAttrs() {
@@ -22,8 +21,7 @@ export class Label extends RenderComponent {
     }
 
     protected createView() {
-        console.log('create text')
-        let data = Object.assign(this.$styles, { text: this.$text })
+        let data = Object.assign(this.$styles, { text: this.$text, click: this.$click })
         TaskManager.instance.send(ETaskType.VIEW, <ITaskEvent>{
             action: EViewTask.CREATE_VIEW,
             createData: { nodeId: this.id, styles: data, type: "label" }

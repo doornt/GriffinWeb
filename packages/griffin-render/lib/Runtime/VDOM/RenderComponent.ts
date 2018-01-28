@@ -14,6 +14,8 @@ export abstract class RenderComponent {
 
     protected $instanceId: string = null
 
+    protected $click: string = null
+
     constructor(attrs: Array<IDOMAtrr>, styles: any) {
         this.$attrs = attrs || []
         this.parseAttrs()
@@ -38,6 +40,9 @@ export abstract class RenderComponent {
                 case "top":
                     let n = parseInt(attr.val)
                     this.$styles[attr.name] = n
+                    break
+                case "@click":
+                    this.$click = attr.val
                     break
             }
         }
