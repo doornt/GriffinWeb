@@ -109,6 +109,7 @@ class Generate {
         this.bufferChildren(parentId)
 
         // remove parent node... maybe has bug here
+        // check this in parent's visit!!
         this.buf.push(`var parent_node = idMap["${parentId}"]`)
         this.buf.push(`if(parent_node.parentId && idMap[parent_node.parentId]){`)
         this.buf.push(`idMap[parent_node.parentId].children = idMap[parent_node.parentId].children.filter((child)=>{

@@ -28,9 +28,13 @@ export class ComponentManager {
             console.warn("unsupported tag", tag)
             return null
         }
-        let view = new T(attrs, styles) as RenderComponent
+        let view = new T(tag,attrs, styles) as RenderComponent
         Application.instance.registerView(view)
         return view
+    }
+
+    public registerNativeView(tagName:string){
+        
     }
 
 }

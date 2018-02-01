@@ -5,12 +5,12 @@ export class Label extends RenderComponent {
 
     private $text = ""
 
-    constructor(attrs: any, styles) {
-        super(attrs, styles)
+    constructor(tag,attrs: any, styles) {
+        super(tag,attrs, styles)
     }
 
-    protected parseAttrs() {
-        super.parseAttrs()
+    protected $parseAttrs() {
+        super.$parseAttrs()
         for (let attr of this.$attrs) {
             switch (attr.name) {
                 case "text":
@@ -20,11 +20,7 @@ export class Label extends RenderComponent {
         }
     }
 
-    protected createView() {
-        let data = Object.assign(this.$styles, { text: this.$text, click: this.$click })
-        TaskManager.instance.send(ETaskType.VIEW, <ITaskEvent>{
-            action: EViewTask.CREATE_VIEW,
-            createData: { nodeId: this.id, styles: data, type: "label" }
-        })
+    protected $createView() {
+        super.$createView({text:this.$text})
     }
 }

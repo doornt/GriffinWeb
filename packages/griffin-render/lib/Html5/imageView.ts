@@ -5,12 +5,12 @@ export class ImageView extends RenderComponent {
 
     private $url = ""
 
-    constructor(attrs: any, styles) {
-        super(attrs, styles)
+    constructor(tag:string,attrs: any, styles) {
+        super(tag,attrs, styles)
     }
 
-    protected parseAttrs() {
-        super.parseAttrs()
+    protected $parseAttrs() {
+        super.$parseAttrs()
         for (let attr of this.$attrs) {
             switch (attr.name) {
                 case "src":
@@ -20,11 +20,9 @@ export class ImageView extends RenderComponent {
         }
     }
 
-    protected createView() {
-        let data = Object.assign(this.$styles, { url: this.$url, click: this.$click })
-        TaskManager.instance.send(ETaskType.VIEW, <ITaskEvent>{
-            action: EViewTask.CREATE_VIEW,
-            createData: { nodeId: this.id, styles: data, type: "img" }
-        })
+    protected $createView() {
+        let props = <any>{}
+        props.url = this.$url
+        super.$createView(props)
     }
 }

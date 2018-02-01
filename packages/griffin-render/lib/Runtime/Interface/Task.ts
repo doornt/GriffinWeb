@@ -17,6 +17,7 @@ export interface ICreateData{
     parentId?:string,
     nodeId:string,
     type:string,
+    props:any,
     styles:any
 }
 

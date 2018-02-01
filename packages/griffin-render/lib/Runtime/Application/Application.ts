@@ -50,4 +50,6 @@ export class Application {
         }
         this.$root.handleEventFromNative(event)
     }
+
+   
 }

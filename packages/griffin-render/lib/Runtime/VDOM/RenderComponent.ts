@@ -16,14 +16,22 @@ export abstract class RenderComponent {
 
     protected $click: string = null
 
-    constructor(attrs: Array<IDOMAtrr>, styles: any) {
+    protected $name:string
+
+    protected $created:boolean = false
+
+    constructor(tag:string,attrs: Array<IDOMAtrr>, styles: any) {
+        this.$name = tag
         this.$attrs = attrs || []
-        this.parseAttrs()
-        for (let k in styles) {
-            this.$buildStyle(k, styles[k])
-        }
         this.$instanceId = generateID()
-        this.createView()
+
+
+        for (let k in styles) {
+            let v = styles[k]
+            this.$styles[k] = isNaN(v) ? v : +v
+        }
+        this.$parseAttrs()
+        this.$createView()
 
     }
 
@@ -31,7 +39,7 @@ export abstract class RenderComponent {
         return this.$instanceId
     }
 
-    protected parseAttrs() {
+    protected $parseAttrs() {
         for (let attr of this.$attrs) {
             switch (attr.name) {
                 case "width":
@@ -49,13 +57,25 @@ export abstract class RenderComponent {
     }
 
 
-    protected abstract createView()
+    protected $createView(props:any = {}) {
+        if(this.$created){
+            return
+        }
+        if(this.$click){
+            props["clickable"] = true
+        }
+        TaskManager.instance.send(ETaskType.VIEW, <ITaskEvent>{
+            action: EViewTask.CREATE_VIEW,
+            createData: { nodeId: this.id, styles: this.$styles,props, type: this.$name }
+        })
+        this.$created = true
+    }
 
-    $render() {
+    protected $render() {
         this.$children.map(item => item.$render())
     }
 
-    addChild(child: RenderComponent) {
+    public addChild(child: RenderComponent) {
         if (!child) {
             return
         }
@@ -64,22 +84,6 @@ export abstract class RenderComponent {
             action: EViewTask.ADD_SUBVIEW,
             addSubviewData: { nodeId: child.id, parentId: this.id }
         })
-    }
-
-    protected $buildStyle(k, v) {
-        this.$styles[k] = isNaN(v) ? v : +v
-        // switch(k){
-        //     case "width":
-        //     case "height":
-        //     case "margin-left":
-        //     case "margin-top":
-        //         let n = parseInt(v)
-        //         this.$styles[k] = n
-        //     break
-        //     default:
-        //         this.$styles[k] = v
-        // }
-
     }
 
     public eventHandler(type: string) {
