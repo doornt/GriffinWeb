@@ -51,8 +51,8 @@ export class TaskManager {
     }
 
     private $createView(data: ICreateData) {
-        console.log("createView call:", JSON.stringify(data), data.styles.click)
-        return global.createElement(data.nodeId, { styles: data.styles, type: data.type })
+        console.log("createView call:", JSON.stringify(data))
+        return global.createElement(data.nodeId, data)
     }
 
 
