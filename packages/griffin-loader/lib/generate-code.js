@@ -54,8 +54,8 @@ class Generate {
         let js = this.buf.join(';\n')
 
         var vars = detect(js).map(function (global) {
-                return global.name;
-            })
+            return global.name;
+        })
             .filter(function (v) {
                 return exclude.indexOf(v) === -1 &&
                     v !== 'undefined' &&
@@ -103,7 +103,23 @@ class Generate {
             id: `${uuid()}`
         }
         this.buf.push(`n = ${JSON.stringify(node)}`)
+        // get attributes from parent exclude layout attributes
+        this.buf.push(`n.attributes = idMap["${parentId}"].attributes`)
+
         this.bufferChildren(parentId)
+
+        // remove parent node... maybe has bug here
+        this.buf.push(`var parent_node = idMap["${parentId}"]`)
+        this.buf.push(`if(parent_node.parentId && idMap[parent_node.parentId]){`)
+        this.buf.push(`idMap[parent_node.parentId].children = idMap[parent_node.parentId].children.filter((child)=>{
+            child.id !== "${parentId}"
+        })`)
+        this.buf.push(`idMap[parent_node.parentId].children.push(n)`)
+        this.buf.push(`} else {`)
+        this.buf.push(`idMap["${node.id}"] = n`)
+        this.buf.push(`}`)
+        this.buf.push(`n.parentId = parent_node.parentId`)
+        this.buf.push(`delete idMap["${parentId}"]`)
     }
 
     visitConditional(cond, parentId) {
@@ -114,7 +130,7 @@ class Generate {
         if (cond.alternate) {
             if (cond.alternate.type === 'Conditional') {
                 this.buf.push('else')
-                this.visitConditional(cond.alternate,parentId);
+                this.visitConditional(cond.alternate, parentId);
             } else {
                 this.buf.push('else {');
                 this.visit(cond.alternate, parentId);
@@ -169,7 +185,7 @@ class Generate {
         this.buf.push('  }\n}).call(this);\n');
     }
 
-    visitAttributes(attrs,attributeBlocks){
+    visitAttributes(attrs, attributeBlocks) {
         if (attrs.length) {
             // this.attrs(attrs);
         }

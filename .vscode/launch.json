@@ -18,6 +18,5 @@
 			"cwd": "${workspaceRoot}/packages/griffin-render/dist",
 			"protocol": "inspector"
 		}
-		
 	]
 }

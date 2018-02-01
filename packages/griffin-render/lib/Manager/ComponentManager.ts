@@ -1,31 +1,36 @@
 import { IDOMAtrr } from "../Interface/INode";
+import { RenderComponent } from "../Runtime/VDOM/RenderComponent";
+import { Application } from "../Runtime/Application/Application";
 
-export class ComponentManager{
+export class ComponentManager {
 
-    private static $inst:ComponentManager
+    private static $inst: ComponentManager
 
-    private _registeredClass:{[name:string]:any} = {}
+    private _registeredClass: { [name: string]: any } = {}
 
-    private constructor(){}
+    private constructor() { }
 
-    public static get instance(){
-        if(!this.$inst){
+    public static get instance() {
+        if (!this.$inst) {
             this.$inst = new ComponentManager()
         }
         return this.$inst
     }
 
-    public register(name:string,ctr:object){
+    public register(name: string, ctr: object) {
         this._registeredClass[name] = ctr
     }
 
-    public createViewByTag(tag:string,attrs:Array<IDOMAtrr>,styles){
+    public createViewByTag(tag: string, attrs: Array<IDOMAtrr>, styles) {
+        console.log("createViewByTag", tag)
         let T = this._registeredClass[tag]
-        if(!T){
-            console.warn("unsupported tag",tag)
+        if (!T) {
+            console.warn("unsupported tag", tag)
             return null
         }
-        return new T(attrs,styles)
+        let view = new T(attrs, styles) as RenderComponent
+        Application.instance.registerView(view)
+        return view
     }
 
 }

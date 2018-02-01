@@ -4,41 +4,46 @@ import { ETaskType, EViewTask, ITaskEvent } from "../Interface/Task";
 import { generateID } from "../../Utils/NodeID";
 import { IDOMAtrr } from "../../Interface/INode";
 
-export abstract class RenderComponent{
+export abstract class RenderComponent {
 
-    protected $attrs:Array<IDOMAtrr>
+    protected $attrs: Array<IDOMAtrr>
 
-    protected $children:Array<RenderComponent> = []
+    protected $children: Array<RenderComponent> = []
 
     protected $styles = {}
 
-    protected $instanceId:string = null
+    protected $instanceId: string = null
 
-    constructor(attrs:Array<IDOMAtrr>,styles:any){
-        this.$attrs = attrs ||  []
+    protected $click: string = null
+
+    constructor(attrs: Array<IDOMAtrr>, styles: any) {
+        this.$attrs = attrs || []
         this.parseAttrs()
-        for(let k in styles){
-            this.$buildStyle(k,styles[k])
+        for (let k in styles) {
+            this.$buildStyle(k, styles[k])
         }
         this.$instanceId = generateID()
         this.createView()
 
     }
 
-    public get id(){
+    public get id() {
         return this.$instanceId
     }
 
-    protected parseAttrs(){
-        for(let attr of this.$attrs){
-            switch(attr.name){
+    protected parseAttrs() {
+        for (let attr of this.$attrs) {
+            switch (attr.name) {
                 case "width":
                 case "height":
                 case "left":
                 case "top":
                     let n = parseInt(attr.val)
                     this.$styles[attr.name] = n
-                break
+                    break
+                case "@click":
+                    this.$click = attr.val
+                    break
             }
         }
     }
@@ -46,23 +51,23 @@ export abstract class RenderComponent{
 
     protected abstract createView()
 
-    $render(){
-        this.$children.map(item=>item.$render())
+    $render() {
+        this.$children.map(item => item.$render())
     }
 
-    addChild(child:RenderComponent){
-        if(!child){
+    addChild(child: RenderComponent) {
+        if (!child) {
             return
         }
         this.$children.push(child)
-        TaskManager.instance.send(ETaskType.VIEW,{
-            action:EViewTask.ADD_SUBVIEW,
-            addSubviewData:{nodeId:child.id,parentId:this.id}
+        TaskManager.instance.send(ETaskType.VIEW, {
+            action: EViewTask.ADD_SUBVIEW,
+            addSubviewData: { nodeId: child.id, parentId: this.id }
         })
     }
 
-    protected $buildStyle(k,v){
-        this.$styles[k] = isNaN(v)?v:+v
+    protected $buildStyle(k, v) {
+        this.$styles[k] = isNaN(v) ? v : +v
         // switch(k){
         //     case "width":
         //     case "height":
@@ -77,5 +82,10 @@ export abstract class RenderComponent{
 
     }
 
+    public eventHandler(type: string) {
+        if (type === "click") {
+            return this.$click
+        }
+        return null
+    }
 }
-    

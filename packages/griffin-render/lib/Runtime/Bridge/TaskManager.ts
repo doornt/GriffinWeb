@@ -1,68 +1,68 @@
 import { ETaskType, ITaskEvent, EViewTask, ICreateData } from "../Interface/Task";
 
-declare var global:{
-    [k:string]:any
+declare var global: {
+    [k: string]: any
 }
 
 
-export class TaskManager{
+export class TaskManager {
 
-    private static $inst:TaskManager = null
+    private static $inst: TaskManager = null
 
-    private constructor(){}
+    private constructor() { }
 
-    public static get instance(){
+    public static get instance() {
         this.$inst = this.$inst || new TaskManager
         return this.$inst
     }
 
-    public init(){
+    public init() {
 
     }
 
-    public send(type:ETaskType,e:ITaskEvent){
-        if(!global.Environment || global.Environment == 'web'){
+    public send(type: ETaskType, e: ITaskEvent) {
+        if (!global.Environment || global.Environment == 'web') {
             return
         }
-        switch(type){
+        switch (type) {
             case ETaskType.VIEW:
                 this.$sendView(e)
-            break
+                break
             case ETaskType.ROOT:
                 this.$createRoot(e.createRootData.nodeId)
-            break
+                break
         }
     }
 
-    private $sendView(e:ITaskEvent){
-       
-        switch(e.action){
+    private $sendView(e: ITaskEvent) {
+
+        switch (e.action) {
             case EViewTask.CREATE_VIEW:
                 this.$createView(e.createData)
-            break
+                break
 
             case EViewTask.ADD_SUBVIEW:
                 this.$addSubview(e.addSubviewData)
-            break
-         
+                break
+
             default:
-            break
+                break
         }
     }
 
-    private $createView(data:ICreateData){
-        console.log("createView call:" , JSON.stringify(data))
-        return global.createElement(data.nodeId,{styles:data.styles,type:data.type})
+    private $createView(data: ICreateData) {
+        console.log("createView call:", JSON.stringify(data), data.styles.click)
+        return global.createElement(data.nodeId, { styles: data.styles, type: data.type })
     }
 
 
-    private $addSubview({parentId,nodeId}){
-        console.log("addSubview call:",parentId,nodeId)
-        return global.addSubview(parentId,nodeId)
+    private $addSubview({ parentId, nodeId }) {
+        console.log("addSubview call:", parentId, nodeId)
+        return global.addSubview(parentId, nodeId)
     }
 
-    private $createRoot(nodeId:string){
-        console.log("createRoot call:",nodeId)
+    private $createRoot(nodeId: string) {
+        console.log("createRoot call:", nodeId)
         return global.createRootView(nodeId)
     }
 }

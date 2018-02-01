@@ -10,16 +10,22 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build-test": "tsc && webpack",
-    "build-publish": "tsc && webpack --env.NODE_ENV=xcode"
+    "build-publish": "tsc && webpack --env.NODE_ENV=xcode",
+    "dev": "gulp dev"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "chokidar": "^2.0.0",
+    "gulp": "^3.9.1",
+    "gulp-tsc": "^1.3.2",
+    "gulp-typescript": "^3.2.4",
     "ts-loader": "^3.2.0",
     "typescript": "^2.6.2",
     "webpack": "^3.10.0"
   },
   "dependencies": {
-    "@types/node": "^8.5.2"
+    "@types/node": "^8.5.2",
+    "express": "^4.16.2"
   }
 }
