@@ -35,7 +35,6 @@ export class TaskManager {
     }
 
     private $sendView(e: ITaskEvent) {
-
         switch (e.action) {
             case EViewTask.CREATE_VIEW:
                 this.$createView(e.createData)

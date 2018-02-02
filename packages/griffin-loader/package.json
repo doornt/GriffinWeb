@@ -1,6 +1,6 @@
 {
-  "name": "pug-compile",
-  "version": "1.0.0",
+  "name": "griffin-loader",
+  "version": "0.0.2",
   "description": "",
   "main": "index.js",
   "directories": {
@@ -16,6 +16,10 @@
   "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:doornt/GriffinWeb.git"
   },
   "author": "",
   "license": "ISC"
