@@ -9,7 +9,7 @@
             "problemMatcher": []
         },{
             "type":"shell",
-            "command": "cd packages/griffin-render && npm run build-test",
+            "command": "cd packages/griffin-render && npm run dist && echo finish",
             "label": "compile-render"
         },
         {

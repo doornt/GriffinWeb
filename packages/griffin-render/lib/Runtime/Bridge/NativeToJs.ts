@@ -2,6 +2,7 @@ import { NativeEvent } from "../Interface/NativeEvent";
 import { Application } from "../Application/Application";
 import {ComponentManager} from "../../Manager/ComponentManager"
 
+
 export class NativeToJs {
     public static init() {
         (<any>global).dispatchEventToJs = (rootViewId: string, event: NativeEvent) => {
@@ -12,5 +13,10 @@ export class NativeToJs {
         (<any>global).registerNativeComponent = (tagName:string) =>{
             ComponentManager.instance.registerNativeView(tagName)
         }
+
+        (<any>global).registerModule = (ctr,name:String)=>{
+            console.log(ctr,name)
+        }
+
     }
 } 

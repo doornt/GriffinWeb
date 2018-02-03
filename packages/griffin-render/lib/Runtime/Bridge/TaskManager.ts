@@ -50,18 +50,15 @@ export class TaskManager {
     }
 
     private $createView(data: ICreateData) {
-        console.log("createView call:", JSON.stringify(data))
         return global.createElement(data.nodeId, data)
     }
 
 
     private $addSubview({ parentId, nodeId }) {
-        console.log("addSubview call:", parentId, nodeId)
         return global.addSubview(parentId, nodeId)
     }
 
     private $createRoot(nodeId: string) {
-        console.log("createRoot call:", nodeId)
         return global.createRootView(nodeId)
     }
 }

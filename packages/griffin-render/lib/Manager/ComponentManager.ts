@@ -22,7 +22,6 @@ export class ComponentManager {
     }
 
     public createViewByTag(tag: string, attrs: Array<IDOMAtrr>, styles) {
-        console.log("createViewByTag", tag)
         let T = this._registeredClass[tag]
         if (!T) {
             console.warn("unsupported tag", tag)
