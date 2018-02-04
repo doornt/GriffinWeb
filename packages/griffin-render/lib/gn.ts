@@ -6,6 +6,8 @@ const launchWithComponent = (view: BaseComponent) => {
     Application.instance.runWithModule(view)
 }
 
-Application.instance.init()
+Application.instance.init();
+
+(<any>global).onRuntimeLoadFinish()
 
 export { BaseComponent, launchWithComponent }
