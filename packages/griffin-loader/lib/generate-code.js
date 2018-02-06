@@ -22,26 +22,6 @@ class Generate {
         this.buf.push(`}`)
     }
 
-    bufferExpression(src) {
-        // if (isConstant(src)) {
-        //     return this.buffer(toConstant(src) + '')
-        // }
-        if (this.lastBufferedIdx == this.buf.length && this.bufferedConcatenationCount < 100) {
-            this.bufferedConcatenationCount++;
-            if (this.lastBufferedType === 'text') this.lastBuffered += '"';
-            this.lastBufferedType = 'code';
-            this.lastBuffered += ' + (' + src + ')';
-            this.buf[this.lastBufferedIdx - 1] = 'pug_html = pug_html + (' + this.bufferStartChar + this.lastBuffered + ');';
-        } else {
-            this.bufferedConcatenationCount = 0;
-            this.buf.push('pug_html = pug_html + (' + src + ');');
-            this.lastBufferedType = 'code';
-            this.bufferStartChar = '';
-            this.lastBuffered = '(' + src + ')';
-            this.lastBufferedIdx = this.buf.length;
-        }
-    }
-
     visit(node, parentId = null) {
         if (!node) {
             return console.error("node empty")
@@ -132,7 +112,7 @@ class Generate {
         // check this in parent's visit!!
         this.buf.push(`var parent_node = pug_idMap["${parentId}"]`)
         this.buf.push(`if(parent_node.parentId && idMap[parent_node.parentId]){`)
-        this.buf.push(`pug_idMap[parent_node.parentId].children = idMap[parent_node.parentId].children.filter((child)=>{
+        this.buf.push(`pug_idMap[parent_node.parentId].children = pug_idMap[parent_node.parentId].children.filter((child)=>{
             return child.id !== "${parentId}"
         })`)
         this.buf.push(`pug_idMap[parent_node.parentId].children.push(n)`)
@@ -224,16 +204,15 @@ class Generate {
     //     return res;
     // }
 
-    // visitCode(code, parentId) {
-    //     if (code.buffer) {
-    //         var val = code.val.trim();
-    //         val = 'null == (pug_interp = ' + val + ') ? "" : pug_interp';
-    //         if (code.mustEscape !== false) val = 'pug_escape' + '(' + val + ')';
-    //         this.bufferExpression(val);
-    //     } else {
-    //         this.buf.push(code.val);
-    //     }
-    // }
+    visitCode(code, parentId) {
+        if (code.buffer) {
+            var val = code.val.trim();
+            val = 'null == (pug_interp = ' + val + ') ? "" : pug_interp';
+            if (code.mustEscape !== false) val = 'pug_escape' + '(' + val + ')';
+        } else {
+            this.buf.push(code.val);
+        }
+    }
 
 
 }
