@@ -111,7 +111,7 @@ class Generate {
         // remove parent node... maybe has bug here
         // check this in parent's visit!!
         this.buf.push(`var parent_node = pug_idMap["${parentId}"]`)
-        this.buf.push(`if(parent_node.parentId && idMap[parent_node.parentId]){`)
+        this.buf.push(`if(parent_node.parentId && pug_idMap[parent_node.parentId]){`)
         this.buf.push(`pug_idMap[parent_node.parentId].children = pug_idMap[parent_node.parentId].children.filter((child)=>{
             return child.id !== "${parentId}"
         })`)
