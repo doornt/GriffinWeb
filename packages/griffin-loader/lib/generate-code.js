@@ -15,11 +15,31 @@ class Generate {
 
 
     bufferChildren(parentId) {
-        this.buf.push(`if(${!!parentId} && idMap["${parentId}"]){`)
-        this.buf.push(`idMap["${parentId}"].children = idMap["${parentId}"].children || []`)
-        this.buf.push(`idMap["${parentId}"].children.push(n)`)
+        this.buf.push(`if(${!!parentId} && pug_idMap["${parentId}"]){`)
+        this.buf.push(`pug_idMap["${parentId}"].children = pug_idMap["${parentId}"].children || []`)
+        this.buf.push(`pug_idMap["${parentId}"].children.push(n)`)
         this.buf.push(`n.parentId = "${parentId}"`)
         this.buf.push(`}`)
+    }
+
+    bufferExpression(src) {
+        // if (isConstant(src)) {
+        //     return this.buffer(toConstant(src) + '')
+        // }
+        if (this.lastBufferedIdx == this.buf.length && this.bufferedConcatenationCount < 100) {
+            this.bufferedConcatenationCount++;
+            if (this.lastBufferedType === 'text') this.lastBuffered += '"';
+            this.lastBufferedType = 'code';
+            this.lastBuffered += ' + (' + src + ')';
+            this.buf[this.lastBufferedIdx - 1] = 'pug_html = pug_html + (' + this.bufferStartChar + this.lastBuffered + ');';
+        } else {
+            this.bufferedConcatenationCount = 0;
+            this.buf.push('pug_html = pug_html + (' + src + ');');
+            this.lastBufferedType = 'code';
+            this.bufferStartChar = '';
+            this.lastBuffered = '(' + src + ')';
+            this.lastBufferedIdx = this.buf.length;
+        }
     }
 
     visit(node, parentId = null) {
@@ -47,22 +67,22 @@ class Generate {
 
     compile() {
 
-        let exclude = ["Object", "idMap", "n"]
+        let exclude = ["Object", "pug_idMap", "n", 'pug_interp']
         this.visit(this.ast)
-        this.buf.push(`let res = Object.keys(idMap).map(key=>idMap[key]).filter(obj=>!obj.parentId);\nreturn res;
+        this.buf.push(`let res = Object.keys(pug_idMap).map(key=>pug_idMap[key]).filter(obj=>!obj.parentId);\nreturn res;
         `)
         let js = this.buf.join(';\n')
 
         var vars = detect(js).map(function (global) {
-            return global.name;
-        })
+                return global.name;
+            })
             .filter(function (v) {
                 return exclude.indexOf(v) === -1 &&
                     v !== 'undefined' &&
                     v !== 'this'
             })
 
-        let runtimeJs = `function template({${vars.join(',')}}) {var n = "",attrs=[], idMap = {};` + js + ";}";
+        let runtimeJs = `function template({${vars.join(',')}}) {var n = "",attrs=[],pug_interp, pug_idMap = {};` + js + ";}";
 
         return runtimeJs
     }
@@ -89,8 +109,8 @@ class Generate {
             this.buf.push(`attrs.push({name: "${attr.name}",val: ${attr.val}})`)
         }
         this.buf.push(`n.attributes = attrs`)
-        this.buf.push(`idMap["${node.id}"] = n `)
-        this.bufferChildren(parentId)
+        this.buf.push(`pug_idMap["${node.id}"] = n `)
+        parentId && this.bufferChildren(parentId)
         if (!tag.selfClosing) {
             this.visit(tag.block, node.id);
         }
@@ -104,23 +124,23 @@ class Generate {
         }
         this.buf.push(`n = ${JSON.stringify(node)}`)
         // get attributes from parent exclude layout attributes
-        this.buf.push(`n.attributes = idMap["${parentId}"].attributes`)
+        this.buf.push(`n.attributes = pug_idMap["${parentId}"].attributes`)
 
         this.bufferChildren(parentId)
 
         // remove parent node... maybe has bug here
         // check this in parent's visit!!
-        this.buf.push(`var parent_node = idMap["${parentId}"]`)
-        this.buf.push(`if(parent_node.parentId && idMap[parent_node.parentId]){`)
-        this.buf.push(`idMap[parent_node.parentId].children = idMap[parent_node.parentId].children.filter((child)=>{
+        this.buf.push(`var parent_node = pug_idMap["${parentId}"]`)
+        this.buf.push(`if(parent_node.parentId && pug_idMap[parent_node.parentId]){`)
+        this.buf.push(`pug_idMap[parent_node.parentId].children = pug_idMap[parent_node.parentId].children.filter((child)=>{
             child.id !== "${parentId}"
         })`)
-        this.buf.push(`idMap[parent_node.parentId].children.push(n)`)
+        this.buf.push(`pug_idMap[parent_node.parentId].children.push(n)`)
         this.buf.push(`} else {`)
-        this.buf.push(`idMap["${node.id}"] = n`)
+        this.buf.push(`pug_idMap["${node.id}"] = n`)
         this.buf.push(`}`)
         this.buf.push(`n.parentId = parent_node.parentId`)
-        this.buf.push(`delete idMap["${parentId}"]`)
+        this.buf.push(`delete pug_idMap["${parentId}"]`)
     }
 
     visitConditional(cond, parentId) {
@@ -202,6 +222,17 @@ class Generate {
     //         this.bufferExpression(res);
     //     }
     //     return res;
+    // }
+
+    // visitCode(code, parentId) {
+    //     if (code.buffer) {
+    //         var val = code.val.trim();
+    //         val = 'null == (pug_interp = ' + val + ') ? "" : pug_interp';
+    //         if (code.mustEscape !== false) val = 'pug_escape' + '(' + val + ')';
+    //         this.bufferExpression(val);
+    //     } else {
+    //         this.buf.push(code.val);
+    //     }
     // }
 
 
