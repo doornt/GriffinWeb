@@ -113,7 +113,7 @@ class Generate {
         this.buf.push(`var parent_node = idMap["${parentId}"]`)
         this.buf.push(`if(parent_node.parentId && idMap[parent_node.parentId]){`)
         this.buf.push(`idMap[parent_node.parentId].children = idMap[parent_node.parentId].children.filter((child)=>{
-            child.id !== "${parentId}"
+            return child.id !== "${parentId}"
         })`)
         this.buf.push(`idMap[parent_node.parentId].children.push(n)`)
         this.buf.push(`} else {`)
