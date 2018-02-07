@@ -7,8 +7,12 @@ let filename = path.resolve(__dirname, '../examples/a.pug')
 var str = require('fs').readFileSync(filename, 'utf8')
 
 
-let res = loader(str)
+let res = loader(str,true)
+
+res = eval(res)
 console.log(res.AstFunc({a:1,b:2}))
+
+
 // require('./b.js')
 
 // var pug = require('pug')
