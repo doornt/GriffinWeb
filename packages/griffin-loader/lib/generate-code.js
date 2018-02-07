@@ -3,7 +3,7 @@ const nodeTemplate = {
     "attributes": "array",
     "children": "array",
     "id": 'number',
-    "parentId": "number"
+    "hasParent": "number"
 }
 
 var detect = require('acorn-globals');
@@ -13,15 +13,12 @@ var walk = require('acorn/dist/walk');
 class Generate {
 
 
-    bufferChildren(parentId) {
-        this.buf.push(`if(${!!parentId} && pug_idMap[${parentId}]){`)
-        this.buf.push(`pug_idMap[${parentId}].children = pug_idMap[${parentId}].children || []`)
-        this.buf.push(`pug_idMap[${parentId}].children.push(n)`)
-        this.buf.push(`n.parentId = ${parentId}`)
-        this.buf.push(`}`)
+    bufferChildren(parentVar,nodeVar) {
+        this.buf.push(`${parentVar}.children = ${parentVar}.children || []`)
+        this.buf.push(`${parentVar}.children.push(${nodeVar})`)
     }
 
-    visit(node, parentId = null) {
+    visit(node) {
         if (!node) {
             return console.error("node empty")
         }
@@ -30,18 +27,23 @@ class Generate {
             return console.error("type unresolved!")
         }
 
-        this.visitNode(node, parentId)
+        this.visitNode(node)
 
     }
 
-    visitNode(node, parentId) {
-        this['visit' + node.type](node, parentId)
+    visitNode(node) {
+        this['visit' + node.type](node)
     }
 
 
     constructor(ast) {
         this.ast = ast
         this.buf = []
+        this.eachCount = 0
+        this.varCount = 0
+        this.nodeValStack = []
+        this.rootVals = []
+        this.allNodes = []
     }
 
     nextId(){
@@ -49,31 +51,44 @@ class Generate {
         return this.id
     }
 
+    nextVarName(){
+        this.varName = '$$_' + this.varCount++
+        return this.varName
+    }
+
+    getParentAndPush(nodeVar){
+        this.allNodes.push(nodeVar)
+        let parentVar = this.nodeValStack.length?this.nodeValStack[this.nodeValStack.length - 1]:null
+        this.nodeValStack.push(nodeVar)
+        return parentVar
+    }
+
     compile() {
 
-        let exclude = ["Object", "pug_idMap", "n", 'pug_interp']
+        let exclude = ["Object", 'pug_interp']
         this.visit(this.ast)
-        this.resetText()
+        // this.resetText()
         
-        this.buf.push(`let res = Object.keys(pug_idMap).map(key=>pug_idMap[key]).filter(obj=>!obj.parentId);\nreturn res;
+        this.buf.push(`let res = [${this.rootVals.join(',')}];\nreturn res;
         `)
-        let js = this.buf.join(';\n')
+        let js = this.buf.join('\n')
 
         var vars = detect(js).map(function (global) {
                 return global.name;
             })
             .filter(function (v) {
-                return exclude.indexOf(v) === -1 &&
+                return exclude.indexOf(v) === -1 && v.indexOf('$$_') === -1 &&
                     v !== 'undefined' &&
                     v !== 'this'
             })
         
-        let runtimeJs = `function template({${vars.join(',')}}) {var n = "",attrs=[],pug_interp, pug_idMap = {};` + js + ";}";
+        let runtimeJs = `function template({${vars.join(',')}}) {var attrs=[],pug_interp, pug_idMap = {};` + js + ";}";
 
         return runtimeJs
     }
 
     resetText(){
+        //这里得重写
         this.buf.push(`Object.keys(pug_idMap).map(k=>{
             if(!pug_idMap[k]){
                 return;
@@ -93,60 +108,58 @@ class Generate {
         })`)
     }
 
-    visitBlock(block, parentId) {
+    visitBlock(block) {
         for (var i = 0; i < block.nodes.length; ++i) {
-            this.visit(block.nodes[i], parentId);
+            this.visit(block.nodes[i]);
         }
     }
 
-    visitTag(tag, parentId) {
+    visitTag(tag) {
         if (tag.name == "style") {
             return
         }
         var node = {
-            name: tag.name,
-            id: this.nextId()
+            name: tag.name
         }
         let attributes = []
         node.attributes = attributes
-        this.buf.push(`n = ${JSON.stringify(node)}`)
+        
+        let nodeVar = this.nextVarName()
+        let parentVar = this.getParentAndPush(nodeVar)
+
+        this.buf.push(`var ${nodeVar} = ${JSON.stringify(node)}`)
         this.buf.push("attrs=[]")
         for (let attr of tag.attrs) {
             this.buf.push(`attrs.push({name: "${attr.name}",val: ${attr.val}})`)
         }
-        this.buf.push(`n.attributes = attrs`)
-        this.buf.push(`pug_idMap[${node.id}] = n `)
-        parentId && this.bufferChildren(parentId)
+        this.buf.push(`${nodeVar}.attributes = attrs`)
+        // this.buf.push(`pug_idMap[${node.id}] = ${nodeVar} `)
+        parentVar && this.bufferChildren(parentVar,nodeVar)
         if (!tag.selfClosing) {
-            this.visit(tag.block, node.id);
+            this.visit(tag.block);
+        }
+        this.nodeValStack.pop()
+
+        if(!parentVar){
+            this.rootVals.push(nodeVar)
         }
     }
 
-    visitText(text, parentId) {
+    visitText(text) {
         var node = {
             name: "text",
-            val: text.val,
-            id: this.nextId()
+            val: text.val
         }
-        this.buf.push(`n = ${JSON.stringify(node)}`)
-        // get attributes from parent exclude layout attributes
-        this.buf.push(`n.attributes = pug_idMap[${parentId}].attributes`)
 
-        this.bufferChildren(parentId)
+        let nodeVar = this.nextVarName()
+        let parentVar = this.getParentAndPush(nodeVar)
 
-        // remove parent node... maybe has bug here
-        // check this in parent's visit!!
-        // this.buf.push(`var parent_node = pug_idMap["${parentId}"]`)
-        // this.buf.push(`if(parent_node.parentId && pug_idMap[parent_node.parentId]){`)
-        // this.buf.push(`pug_idMap[parent_node.parentId].children = pug_idMap[parent_node.parentId].children.filter((child)=>{
-        //     return child.id !== "${parentId}"
-        // })`)
-        // this.buf.push(`pug_idMap[parent_node.parentId].children.push(n)`)
-        // this.buf.push(`} else {`)
-        // this.buf.push(`pug_idMap["${node.id}"] = n`)
-        // this.buf.push(`}`)
-        // this.buf.push(`n.parentId = parent_node.parentId`)
-        // this.buf.push(`delete pug_idMap["${parentId}"]`)
+        this.buf.push(`let ${nodeVar} = ${JSON.stringify(node)}`)
+
+        parentVar && this.bufferChildren(parentVar,nodeVar)
+
+        this.nodeValStack.pop()
+
     }
 
     visitConditional(cond, parentId) {
@@ -166,8 +179,9 @@ class Generate {
         }
     }
 
-    visitEach(each, parentId) {
+    visitEach(each) {
         var indexVarName = each.key || 'pug_index' + this.eachCount;
+        
         this.eachCount++;
 
         this.buf.push('' +
@@ -180,17 +194,20 @@ class Generate {
             this.buf.push('    if ($$obj.length) {');
         }
 
+
         this.buf.push('' +
-            '      for (var ' + indexVarName + ' = 0, $$l = $$obj.length; ' + indexVarName + ' < $$l; ' + indexVarName + '++) {\n' +
+            '      for (var ' + indexVarName + ' = 0,$$l = $$obj.length; ' + indexVarName + ' < $$l; ' + indexVarName + '++) {\n' +
             '        var ' + each.val + ' = $$obj[' + indexVarName + '];');
 
-        this.visit(each.block, parentId);
+        this.visit(each.block);
+
+        // this.buf.push('debugger;n.id = ' + parentIdName + '+ "_" +' + indexVarName)
 
         this.buf.push('      }');
 
         if (each.alternate) {
             this.buf.push('    } else {');
-            this.visit(each.alternate, parentId);
+            this.visit(each.alternate);
             this.buf.push('    }');
         }
 
@@ -201,12 +218,12 @@ class Generate {
             '      $$l++;\n' +
             '      var ' + each.val + ' = $$obj[' + indexVarName + '];');
 
-        this.visit(each.block, parentId);
+        this.visit(each.block);
 
         this.buf.push('    }');
         if (each.alternate) {
             this.buf.push('    if ($$l === 0) {');
-            this.visit(each.alternate, parentId);
+            this.visit(each.alternate);
             this.buf.push('    }');
         }
         this.buf.push('  }\n}).call(this);\n');
@@ -230,15 +247,35 @@ class Generate {
     //     return res;
     // }
 
-    visitCode(code, parentId) {
+    visitCode(code) {
+        if(code.buffer){
+            var node = {
+                name: "text"
+            }
+            
+            let nvar = this.nextVarName()
+            let parentVar = this.getParentAndPush(nvar)
 
-        var node = {
-            name: "text",
-            id: this.nextId()
+            this.buf.push(`let ${nvar} = ${JSON.stringify(node)};${nvar}.val = ${code.val.trim()};`)
+            parentVar && this.bufferChildren(parentVar,nvar)
+
+            this.nodeValStack.pop()
+        }else{
+            this.buf.push(code.val);
         }
 
-        this.buf.push(`n = ${JSON.stringify(node)};n.val = ${code.val.trim()};pug_idMap[n.id] = n;`)
-        parentId && this.bufferChildren(parentId)
+        // if(code.block){
+        //     if(!code.buffer){
+                
+        //     }
+        // }
+
+        if(code.block){
+            if (!code.buffer) this.buf.push('{');
+            this.visit(code.block);
+            if (!code.buffer) this.buf.push('}');
+        }
+        
 
     }
 
