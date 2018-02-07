@@ -67,7 +67,7 @@ class Generate {
 
         let exclude = ["Object", 'pug_interp']
         this.visit(this.ast)
-        // this.resetText()
+        this.resetText()
         
         this.buf.push(`let res = [${this.rootVals.join(',')}];\nreturn res;
         `)
@@ -89,23 +89,22 @@ class Generate {
 
     resetText(){
         //这里得重写
-        this.buf.push(`Object.keys(pug_idMap).map(k=>{
-            if(!pug_idMap[k]){
-                return;
+        this.buf.push(`
+            let $$_roots = [${this.rootVals.join(',')}];
+            function $$_visitText(node){
+                if(!node.children){
+                    return
+                }
+                if(node.children.length && node.children.filter(n=>n.name == 'text').length == node.children.length){
+                    node.val = node.children.map(n=>n.val).join('')
+                    node.name = 'text'
+                    node.children = []
+                }else{
+                    node.children.map(n=>$$_visitText(n))
+                }
             }
-            let children = (pug_idMap[k].children || []);
-            let texts = children.filter(o=>o.name == 'text')
-            if(texts.length == children.length){
-                let val = texts.map(t=>t.val).join('')
-                pug_idMap[k].val = val;
-                pug_idMap[k].name = 'label';
-                pug_idMap[k].children = [];
-                texts.map(text=>{
-                    text.parentId = null;
-                    delete pug_idMap[text.id];
-                })
-            }
-        })`)
+            $$_roots.map(r=>$$_visitText(r))
+        `)
     }
 
     visitBlock(block) {
@@ -252,7 +251,6 @@ class Generate {
             var node = {
                 name: "text"
             }
-            
             let nvar = this.nextVarName()
             let parentVar = this.getParentAndPush(nvar)
 
@@ -264,19 +262,11 @@ class Generate {
             this.buf.push(code.val);
         }
 
-        // if(code.block){
-        //     if(!code.buffer){
-                
-        //     }
-        // }
-
         if(code.block){
             if (!code.buffer) this.buf.push('{');
             this.visit(code.block);
             if (!code.buffer) this.buf.push('}');
         }
-        
-
     }
 
 
