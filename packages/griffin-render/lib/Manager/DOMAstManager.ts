@@ -1,18 +1,21 @@
 import { IDOMNode, IStyle, IDOMAtrr } from "../Interface/INode"
-import { ComponentManager } from "./ComponentManager";
+import { H5Manager } from "./H5Manager";
+import { H5Component } from "../Runtime/export";
 
 export class DOMAstManager {
 
     private $nodes: Array<IDOMNode>
     private $locals = {}
     private $styles: Array<IStyle>
+    private $id:string
 
     constructor(nodes: Array<IDOMNode>, styles: any) {
         this.$nodes = nodes
         this.$styles = styles
     }
 
-    compile() {
+    compile(id:string) {
+        this.$id = id
         let children = []
         for (let node of this.$nodes) {
             children.push(this.$visitNode(node))
@@ -34,12 +37,15 @@ export class DOMAstManager {
             default:
                 view = this.$visitTag(node)
                 if (node.children) {
-                    let children = new DOMAstManager(node.children, this.$styles).compile()
+                    let children = new DOMAstManager(node.children, this.$styles).compile(this.$id)
                     for (let child of children) {
                         view.addChild(child)
                     }
                 }
                 break
+        }
+        if(view){
+            view.masterId = this.$id
         }
         return view
     }
@@ -49,16 +55,16 @@ export class DOMAstManager {
         this.$configStyle(node, styles)
         node.attributes.push({ name: "text", val: node.val })
 
-        return ComponentManager.instance.createViewByTag("text", node.attributes, styles)
+        return H5Manager.instance.createViewByTag("text", node.attributes, styles)
     }
 
     private $visitTag(node: IDOMNode) {
-        let view = null
+        let view:any = null
         let styles = {}
         this.$configStyle(node, styles)
         switch (node.name) {
             default:
-                view = ComponentManager.instance.createViewByTag(node.name, node.attributes, styles)
+                view = H5Manager.instance.createViewByTag(node.name, node.attributes, styles)
                 break
         }
         return view

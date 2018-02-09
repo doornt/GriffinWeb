@@ -1,7 +1,6 @@
 import { BaseComponent } from '../Components/BaseComponent';
 import { JSLibrary } from '../Runtime/Bridge/JsLibrary';
-import { launchWithComponent } from '../gn';
-
+import { RootView } from '../Runtime/VDOM/RootView';
 
 export class Router{
 
@@ -14,7 +13,7 @@ export class Router{
 
     private $running = false
 
-    private $stack = []
+    private $stack:Array<RootView> = []
 
     private $defaultRoute:string
 
@@ -39,7 +38,7 @@ export class Router{
         }
         let ctor = (new r.component) as BaseComponent
 
-        this.$stack.push(ctor)
+        // this.$stack.push(ctor)
 
         JSLibrary.navigator.push({id:ctor.id},()=>{})
         
@@ -51,7 +50,6 @@ export class Router{
         }
         if(this.$defaultRoute && this.$routes[this.$defaultRoute]){
             this.push({name:this.$defaultRoute})
-            launchWithComponent(this.$stack[0])
         }
     }
     

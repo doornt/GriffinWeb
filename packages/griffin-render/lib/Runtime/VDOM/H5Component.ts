@@ -3,12 +3,12 @@ import { TaskManager } from "../Bridge/TaskManager";
 import { ETaskType, EViewTask, ITaskEvent } from "../Interface/Task";
 import { generateID } from "../../Utils/NodeID";
 import { IDOMAtrr } from "../../Interface/INode";
+import { EventDispatcher } from '../../Event/EventDispatcher';
+import { RenderNode } from './RenderNode';
 
-export abstract class RenderComponent {
+export abstract class H5Component extends RenderNode{
 
     protected $attrs: Array<IDOMAtrr>
-
-    protected $children: Array<RenderComponent> = []
 
     protected $styles = {}
 
@@ -16,27 +16,22 @@ export abstract class RenderComponent {
 
     protected $click: string = null
 
-    protected $name:string
-
     protected $created:boolean = false
 
     constructor(tag:string,attrs: Array<IDOMAtrr>, styles: any) {
-        this.$name = tag
+
+        super()
+
+        this.tagName = tag
+        this.id = generateID()
+        
         this.$attrs = attrs || []
-        this.$instanceId = generateID()
-
-
         for (let k in styles) {
             let v = styles[k]
             this.$styles[k] = isNaN(v) ? v : +v
         }
         this.$parseAttrs()
         this.$createView()
-
-    }
-
-    public get id() {
-        return this.$instanceId
     }
 
     protected $parseAttrs() {
@@ -66,30 +61,24 @@ export abstract class RenderComponent {
         }
         TaskManager.instance.send(ETaskType.VIEW, <ITaskEvent>{
             action: EViewTask.CREATE_VIEW,
-            createData: { nodeId: this.id, styles: this.$styles,props, type: this.$name }
+            createData: { nodeId: this.id, styles: this.$styles,props, type: this.tagName }
         })
         this.$created = true
     }
 
     protected $render() {
-        this.$children.map(item => item.$render())
+        // this.children.map(item => item.$render())
     }
 
-    public addChild(child: RenderComponent) {
-        if (!child) {
-            return
+
+    public $onNativeEvent(type:string){
+        let masterEvent:string = null
+        if(type == "click"){
+            masterEvent = this.$click
         }
-        this.$children.push(child)
-        TaskManager.instance.send(ETaskType.VIEW, {
-            action: EViewTask.ADD_SUBVIEW,
-            addSubviewData: { nodeId: child.id, parentId: this.id }
-        })
+        if(masterEvent && this.$master &&  this.$master[masterEvent]){
+            this.$master[masterEvent]()
+        }
     }
 
-    public eventHandler(type: string) {
-        if (type === "click") {
-            return this.$click
-        }
-        return null
-    }
 }

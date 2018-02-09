@@ -1,16 +1,19 @@
 import { setup } from "./setup";
-import { BaseComponent } from "../../gn";
 import { TaskManager } from "../Bridge/TaskManager";
-import { RootView } from "../VDOM/RootView";
 import { ETaskType, ITaskEvent, EViewTask } from "../Interface/Task";
 import * as Html5 from "../../Html5/index"
-import { RenderComponent } from "../VDOM/RenderComponent";
+import { H5Component } from "../VDOM/H5Component";
 import { NativeEvent } from "../Interface/NativeEvent";
+import { RootView } from '../VDOM/RootView';
+import { BaseComponent } from '../../Components/BaseComponent';
+import { RenderNode } from "../VDOM/RenderNode";
 
 export class Application {
     private static $inst = null
 
-    private $root: RootView = null
+    private $views:{
+        [key:number]:RootView|RenderNode
+    } = {}
 
     private constructor() { }
 
@@ -29,26 +32,28 @@ export class Application {
         setup()
         TaskManager.instance.init()
         Html5.setup()
-        this.$root = RootView.create()
     }
 
-    public runWithModule(view: BaseComponent) {
-        this.$root.component = view
-        TaskManager.instance.send(ETaskType.VIEW, <ITaskEvent>{
-            action: EViewTask.ADD_SUBVIEW,
-            addSubviewData: { parentId: this.$root.id, nodeId: view.id }
-        })
+    public registerRootView(v:RootView){
+        this.$views[v.id] = v
     }
 
-    public registerView(view: RenderComponent) {
-        this.$root.registerView(view)
+    public registerComponent(comp:RenderNode){
+        this.$views[comp.id] = comp
     }
 
-    public handleEventFromNative(rootviewId: string, event: NativeEvent) {
-        if (rootviewId !== this.$root.id) {
-            return
+    public handleEventFromNative(vid: string, event: NativeEvent) {
+        if(!this.$views[vid]){
+            return console.error("unexpected view id",vid)
         }
-        this.$root.handleEventFromNative(event)
+        let view = this.$views[vid]
+      
+        if(view instanceof RootView){
+            view[event.event] && view[event.event]()
+        }else if(view instanceof RenderNode){
+            (view as RenderNode).$onNativeEvent(event.event)
+        }
+        // this.$views[rootviewId].handleEventFromNative(event)
     }
 
    

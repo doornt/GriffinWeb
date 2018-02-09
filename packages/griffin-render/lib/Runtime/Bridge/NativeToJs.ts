@@ -1,19 +1,19 @@
 import { NativeEvent } from "../Interface/NativeEvent";
 import { Application } from "../Application/Application";
-import {ComponentManager} from "../../Manager/ComponentManager"
+import {H5Manager} from "../../Manager/H5Manager"
 
 
 declare var global:any;
 
 export class NativeToJs {
     public static init() {
-        global.dispatchEventToJs = (rootViewId: string, event: NativeEvent) => {
+        global.dispatchEventToJs = (vid: string, event: NativeEvent) => {
             console.log(JSON.stringify(event))
-            Application.instance.handleEventFromNative(rootViewId, event)
+            Application.instance.handleEventFromNative(vid, event)
         }
 
         global.registerNativeComponent = (tagName:string) =>{
-            ComponentManager.instance.registerNativeView(tagName)
+            H5Manager.instance.registerNativeView(tagName)
         }
 
         global.registerModule = (ctr,name:string)=>{

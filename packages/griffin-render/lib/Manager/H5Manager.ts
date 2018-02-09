@@ -1,10 +1,11 @@
 import { IDOMAtrr } from "../Interface/INode";
-import { RenderComponent } from "../Runtime/VDOM/RenderComponent";
+import { H5Component } from "../Runtime/VDOM/H5Component";
 import { Application } from "../Runtime/Application/Application";
+import { RenderNode } from '../Runtime/VDOM/RenderNode';
 
-export class ComponentManager {
+export class H5Manager {
 
-    private static $inst: ComponentManager
+    private static $inst: H5Manager
 
     private _registeredClass: { [name: string]: any } = {}
 
@@ -12,7 +13,7 @@ export class ComponentManager {
 
     public static get instance() {
         if (!this.$inst) {
-            this.$inst = new ComponentManager()
+            this.$inst = new H5Manager()
         }
         return this.$inst
     }
@@ -27,8 +28,8 @@ export class ComponentManager {
             console.warn("unsupported tag", tag)
             return null
         }
-        let view = new T(tag,attrs, styles) as RenderComponent
-        Application.instance.registerView(view)
+        let view = new T(tag,attrs, styles) as RenderNode
+        Application.instance.registerComponent(view)
         return view
     }
 

@@ -1,7 +1,7 @@
-import { RenderComponent, ETaskType, TaskManager, ITaskEvent, EViewTask } from "../Runtime/export";
+import { H5Component, ETaskType, TaskManager, ITaskEvent, EViewTask } from "../Runtime/export";
 
 
-export class ImageView extends RenderComponent {
+export class ImageView extends H5Component {
 
     private $url = ""
 

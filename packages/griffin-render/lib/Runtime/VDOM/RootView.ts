@@ -1,8 +1,8 @@
 import { TaskManager } from "../Bridge/TaskManager";
-import { ETaskType, ITaskEvent } from "../Interface/Task";
+import { ETaskType, ITaskEvent, EViewTask } from "../Interface/Task";
 import { generateID } from "../../Utils/NodeID";
 import { BaseComponent } from "../../gn";
-import { RenderComponent } from "./RenderComponent";
+import { H5Component } from "./H5Component";
 import { NativeEvent } from "../Interface/NativeEvent";
 
 export class RootView {
@@ -28,18 +28,11 @@ export class RootView {
 
     public set component(_component: BaseComponent) {
         this.$component = _component
+        TaskManager.instance.send(ETaskType.VIEW, <ITaskEvent>{
+            action: EViewTask.ADD_SUBVIEW,
+            addSubviewData: { parentId: this.id, nodeId: this.$component.id }
+        })
     }
 
-    public registerView(view: RenderComponent) {
-        this.$views[view.id] = view
-    }
 
-    public handleEventFromNative(event: NativeEvent) {
-        let view = this.$views[event.nodeId] as RenderComponent
-        if (!view) {
-            return
-        }
-        let handlerString = view.eventHandler(event.event)
-        this.$component[handlerString] && this.$component[handlerString]()
-    }
 }
