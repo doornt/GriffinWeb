@@ -36,12 +36,10 @@ export class Router{
         if(!r){
             return console.error("no route named ",route.name)
         }
-        let ctor = (new r.component) as BaseComponent
-
-        // this.$stack.push(ctor)
-
-        JSLibrary.navigator.push({id:ctor.id},()=>{})
-        
+        let root = RootView.create()
+        root.component = (new r.component) as BaseComponent
+        this.$stack.push(root)
+        JSLibrary.navigator.push({id:root.id},()=>{})
     }
 
     public run(){
