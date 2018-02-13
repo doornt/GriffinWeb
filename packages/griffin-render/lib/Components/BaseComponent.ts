@@ -55,10 +55,9 @@ export class BaseComponent extends RenderNode{
         if(children.length == 1){
             this.$view = children[0]
         }else{
-            if(this.$view){
-                for (let child of children) {
-                    this.$view.addChild(child)
-                }
+            this.$view = this.root.createElement("div", [], {}) as H5Component
+            for (let child of children) {
+                this.$view.addChild(child)
             }
         }
         
