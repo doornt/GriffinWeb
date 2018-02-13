@@ -34,7 +34,6 @@ export class BaseComponent extends RenderNode{
         }
         
         if(this.root){
-            this.$view = this.root.createElement("div", [], {}) as H5Component
             this.root.addComponent(this.$instanceId,this)
             this.$render()
         }
@@ -53,11 +52,16 @@ export class BaseComponent extends RenderNode{
     $rebuildAst() {
         let compileJson = this.$ast({ test: true, list: [1, 2, 3, 4, 5] })
         let children = new DOMAstManager(compileJson, this.$styles).compile(this.$instanceId,this.$rootViewId)
-        if(this.$view){
-            for (let child of children) {
-                this.$view.addChild(child)
+        if(children.length == 1){
+            this.$view = children[0]
+        }else{
+            if(this.$view){
+                for (let child of children) {
+                    this.$view.addChild(child)
+                }
             }
         }
+        
     }
 
     public get id() {

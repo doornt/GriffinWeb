@@ -47,11 +47,13 @@ export class TaskManager {
     }
 
     private $createView(data: ICreateData) {
+        console.log("create view",JSON.stringify(data))
         return global.createElement(this.$rootViewId,data.nodeId, data)
     }
 
 
     private $addSubview({ parentId, nodeId }) {
+        console.log("addSubview view",parentId,nodeId)
         return global.addSubview(this.$rootViewId,parentId, nodeId)
     }
 

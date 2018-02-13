@@ -8,7 +8,7 @@ import { RootView } from './RootView';
 export class RenderNode extends EventDispatcher{
     protected $tagName:string
 
-    protected $children:Array<RenderNode>
+    protected $children:Array<RenderNode> = []
 
     protected $instanceId:string
 
