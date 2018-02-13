@@ -1,32 +1,39 @@
 import { IDOMNode, IStyle, IDOMAtrr } from "../Interface/INode"
 import { H5Manager } from "./H5Manager";
-import { H5Component } from "../Runtime/export";
+import { RenderNode } from '../Runtime/VDOM/RenderNode';
+import { RootView } from '../Runtime/VDOM/RootView';
+import { Instance } from '../Runtime/VDOM/Instance';
 
 export class DOMAstManager {
 
     private $nodes: Array<IDOMNode>
     private $locals = {}
     private $styles: Array<IStyle>
-    private $id:string
+    private $componentId:string
+    private $root:RootView
 
     constructor(nodes: Array<IDOMNode>, styles: any) {
         this.$nodes = nodes
         this.$styles = styles
     }
 
-    compile(id:string) {
-        this.$id = id
+    compile(componentId:string,rootId:string) {
+        this.$componentId = componentId
+        this.$root = Instance.getRootView(rootId)
+        if(!this.$root){
+            return
+        }
+
         let children = []
         for (let node of this.$nodes) {
             children.push(this.$visitNode(node))
         }
-
         return children
-
     }
 
     private $visitNode(node: IDOMNode) {
-        let view = null
+        let view:RenderNode = null
+        
         switch (node.name) {
             // case "block":
             //     view = this.$visitBlock(node as IPugBlock)
@@ -37,7 +44,7 @@ export class DOMAstManager {
             default:
                 view = this.$visitTag(node)
                 if (node.children) {
-                    let children = new DOMAstManager(node.children, this.$styles).compile(this.$id)
+                    let children = new DOMAstManager(node.children, this.$styles).compile(this.$componentId,this.$root.id)
                     for (let child of children) {
                         view.addChild(child)
                     }
@@ -45,28 +52,30 @@ export class DOMAstManager {
                 break
         }
         if(view){
-            view.masterId = this.$id
+            view.componentId = this.$componentId
         }
         return view
     }
 
-    private $visitText(node: IDOMNode) {
+    private $visitText(node: IDOMNode):RenderNode {
         let styles = {}
         this.$configStyle(node, styles)
         node.attributes.push({ name: "text", val: node.val })
 
-        return H5Manager.instance.createViewByTag("text", node.attributes, styles)
+        let view:RenderNode = this.$root.createElement("text", node.attributes, styles)
+        return view
     }
 
     private $visitTag(node: IDOMNode) {
-        let view:any = null
+        let view:RenderNode = null
         let styles = {}
         this.$configStyle(node, styles)
         switch (node.name) {
             default:
-                view = H5Manager.instance.createViewByTag(node.name, node.attributes, styles)
+                view = this.$root.createElement(node.name, node.attributes, styles) 
                 break
         }
+       
         return view
     }
 

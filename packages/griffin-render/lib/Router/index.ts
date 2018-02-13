@@ -37,7 +37,7 @@ export class Router{
             return console.error("no route named ",route.name)
         }
         let root = RootView.create()
-        root.component = (new r.component) as BaseComponent
+        root.component = r.component
         this.$stack.push(root)
         JSLibrary.navigator.push({id:root.id},()=>{})
     }

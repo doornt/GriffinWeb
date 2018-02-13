@@ -5,7 +5,8 @@ let pugJson = require(__dirname + '/../examples/a.pug')
 class TestAComponent extends BaseComponent {
 
     constructor() {
-        super(pugJson)
+        super()
+        this.template = pugJson
     }
 
     clickclick() {

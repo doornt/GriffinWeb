@@ -7,20 +7,17 @@ declare var global: {
 
 export class TaskManager {
 
-    private static $inst: TaskManager = null
+    private $rootViewId:string
 
-    private constructor() { }
-
-    public static get instance() {
-        this.$inst = this.$inst || new TaskManager
-        return this.$inst
+    private constructor(id:string) { 
+        this.$rootViewId = id
     }
 
-    public init() {
-
+    public static create(id:string) {
+        return new TaskManager(id)
     }
 
-    public send(type: ETaskType, e: ITaskEvent) {
+    public send(type: ETaskType, e?: ITaskEvent) {
         if (!global.Environment || global.Environment == 'web') {
             return
         }
@@ -29,7 +26,7 @@ export class TaskManager {
                 this.$sendView(e)
                 break
             case ETaskType.ROOT:
-                this.$createRoot(e.createRootData.nodeId)
+                this.$createRoot()
                 break
         }
     }
@@ -50,15 +47,15 @@ export class TaskManager {
     }
 
     private $createView(data: ICreateData) {
-        return global.createElement(data.nodeId, data)
+        return global.createElement(this.$rootViewId,data.nodeId, data)
     }
 
 
     private $addSubview({ parentId, nodeId }) {
-        return global.addSubview(parentId, nodeId)
+        return global.addSubview(this.$rootViewId,parentId, nodeId)
     }
 
-    private $createRoot(nodeId: string) {
-        return global.createRootView(nodeId)
+    private $createRoot() {
+        return global.createRootView(this.$rootViewId)
     }
 }

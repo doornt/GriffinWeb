@@ -30,7 +30,6 @@ export class Application {
 
     public init() {
         setup()
-        TaskManager.instance.init()
         Html5.setup()
     }
 

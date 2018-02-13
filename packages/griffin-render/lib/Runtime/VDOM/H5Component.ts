@@ -8,41 +8,31 @@ import { RenderNode } from './RenderNode';
 
 export abstract class H5Component extends RenderNode{
 
-    protected $attrs: Array<IDOMAtrr>
-
-    protected $styles = {}
-
     protected $instanceId: string = null
 
     protected $click: string = null
 
     protected $created:boolean = false
 
-    constructor(tag:string,attrs: Array<IDOMAtrr>, styles: any) {
-
+    constructor() {
         super()
-
-        this.tagName = tag
         this.id = generateID()
-        
-        this.$attrs = attrs || []
-        for (let k in styles) {
-            let v = styles[k]
-            this.$styles[k] = isNaN(v) ? v : +v
-        }
+    }
+
+    protected setupView(){
         this.$parseAttrs()
         this.$createView()
     }
 
     protected $parseAttrs() {
-        for (let attr of this.$attrs) {
+        for (let attr of this.$attrArray) {
             switch (attr.name) {
                 case "width":
                 case "height":
                 case "left":
                 case "top":
                     let n = parseInt(attr.val)
-                    this.$styles[attr.name] = n
+                    this.$style[attr.name] = n
                     break
                 case "@click":
                     this.$click = attr.val
@@ -52,6 +42,8 @@ export abstract class H5Component extends RenderNode{
     }
 
 
+
+
     protected $createView(props:any = {}) {
         if(this.$created){
             return
@@ -59,11 +51,14 @@ export abstract class H5Component extends RenderNode{
         if(this.$click){
             props["clickable"] = true
         }
-        TaskManager.instance.send(ETaskType.VIEW, <ITaskEvent>{
-            action: EViewTask.CREATE_VIEW,
-            createData: { nodeId: this.id, styles: this.$styles,props, type: this.tagName }
-        })
-        this.$created = true
+        
+        if(this.taskManager){
+            this.taskManager.send(ETaskType.VIEW, <ITaskEvent>{
+                action: EViewTask.CREATE_VIEW,
+                createData: { nodeId: this.id, styles: this.$style, props, type: this.tagName }
+            })
+            this.$created = true
+        }
     }
 
     protected $render() {

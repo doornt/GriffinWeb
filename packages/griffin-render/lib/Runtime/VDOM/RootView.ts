@@ -1,37 +1,88 @@
 import { TaskManager } from "../Bridge/TaskManager";
 import { ETaskType, ITaskEvent, EViewTask } from "../Interface/Task";
 import { generateID } from "../../Utils/NodeID";
-import { BaseComponent } from "../../gn";
 import { H5Component } from "./H5Component";
 import { NativeEvent } from "../Interface/NativeEvent";
+import { BaseComponent } from '../../Components/BaseComponent';
+import { IDOMAtrr } from '../../Interface/INode';
+import { H5Manager } from '../../Manager/H5Manager';
+import { RenderNode } from "./RenderNode";
+import { Instance } from './Instance';
 
 export class RootView {
 
-    private $instanceId = null
+    private $rootId = null
 
     private $component: BaseComponent = null
 
-    private $views: { [id: string]: any } = {}
+    private $viewsMap: { [id: string]: RenderNode } = {}
+
+    private $componentMap:{[id:string]:BaseComponent} = {}
+
+    private $taskManager:TaskManager
 
     private constructor() {
-        this.$instanceId = generateID()
-        TaskManager.instance.send(ETaskType.ROOT, { createRootData: { nodeId: this.$instanceId } })
+        this.$rootId = generateID()
+        this.$taskManager = TaskManager.create(this.$rootId)
+        this.$taskManager.send(ETaskType.ROOT)
+        Instance.addRootView(this.$rootId,this)
     }
 
     public get id() {
-        return this.$instanceId
+        return this.$rootId
+    }
+
+    public get taskManager():TaskManager{
+        return this.$taskManager
+    }
+
+    public getViewById(id:string){
+        return this.$viewsMap[id]
+    }
+
+    public getCoponentById(id:string){
+        return this.$componentMap[id]
+    }
+
+    public createView(tagName:string,props:{
+        attr:any,
+        style:any
+    }){
+
     }
 
     public static create(): RootView {
         return new RootView()
     }
 
-    public set component(_component: BaseComponent) {
-        this.$component = _component
-        TaskManager.instance.send(ETaskType.VIEW, <ITaskEvent>{
+    public set component(T: typeof BaseComponent) {
+        let t = new T()
+        this.$component = t
+        t.rootViewId = this.$rootId
+        this.$taskManager.send(ETaskType.VIEW, <ITaskEvent>{
             action: EViewTask.ADD_SUBVIEW,
             addSubviewData: { parentId: this.id, nodeId: this.$component.id }
         })
+    }
+
+    public addComponent(id:string,c:BaseComponent){
+        this.$componentMap[id] = c
+    }
+
+    public createElement(tag: string, attrs: Array<IDOMAtrr>, styles){
+        let T = H5Manager.instance.getElementType(tag)
+        if(T){
+            let view = new T() as RenderNode
+            view.tagName = tag
+            view.attr = attrs
+            view.style = styles
+            view.rootViewId = this.$rootId
+            this.$viewsMap[view.id] = view
+            return view
+        }else{
+            return null
+        }
+        
     }
 
 

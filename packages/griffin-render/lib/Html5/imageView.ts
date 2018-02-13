@@ -5,13 +5,13 @@ export class ImageView extends H5Component {
 
     private $url = ""
 
-    constructor(tag:string,attrs: any, styles) {
-        super(tag,attrs, styles)
+    constructor() {
+        super()
     }
 
     protected $parseAttrs() {
         super.$parseAttrs()
-        for (let attr of this.$attrs) {
+        for (let attr of this.$attrArray) {
             switch (attr.name) {
                 case "src":
                     this.$url = attr.val

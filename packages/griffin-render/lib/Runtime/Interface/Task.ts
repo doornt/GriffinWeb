@@ -1,5 +1,3 @@
-import { BaseComponent } from "../../gn";
-
 export enum ETaskType{
     VIEW = "view",
     ROOT = "create_root"
@@ -21,10 +19,6 @@ export interface ICreateData{
     styles:any
 }
 
-export interface ICreateRootData{
-    nodeId:string
-}
-
 export interface IAddSubviewData{
     nodeId:string,
     parentId:string
@@ -33,7 +27,6 @@ export interface IAddSubviewData{
 export interface ITaskEvent{
     action?:EViewTask,
     createData?:ICreateData,
-    createRootData?:ICreateRootData,
     addSubviewData?:IAddSubviewData,
     
 }

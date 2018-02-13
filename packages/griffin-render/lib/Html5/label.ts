@@ -5,13 +5,13 @@ export class Label extends H5Component {
 
     private $text = ""
 
-    constructor(tag,attrs: any, styles) {
-        super(tag,attrs, styles)
+    constructor() {
+        super()
     }
 
     protected $parseAttrs() {
         super.$parseAttrs()
-        for (let attr of this.$attrs) {
+        for (let attr of this.$attrArray) {
             switch (attr.name) {
                 case "text":
                     this.$text = attr.val
