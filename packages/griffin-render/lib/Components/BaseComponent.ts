@@ -24,12 +24,12 @@ export class BaseComponent extends RenderNode{
     }
 
     protected set template(pugData:any){
-        this.$ast = pugData.AsfFunc
+        this.$ast = pugData.AstFunc
         this.$styles = pugData.style
     }
 
     protected setupView(){
-        if(this.$ast){
+        if(!this.$ast){
             throw new Error('template file error or not set')
         }
         
