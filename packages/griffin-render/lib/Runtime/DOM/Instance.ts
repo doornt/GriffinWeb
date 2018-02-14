@@ -18,16 +18,16 @@ export class Instance{
         }
     }
 
-    static handleEventFromNative(rid:string,vid: string, event: NativeEvent) {
+    static handleEventFromNative(rid:string, event: NativeEvent) {
         if(!rootMap[rid]){
             return console.error("unexpected root id",rid)
         }
         let root = rootMap[rid]
       
-        let view = root.getViewById(vid)
+        let view = root.getViewById(event.nodeId)
         
         if(!view){
-            return console.error('unexpected view id',vid)
+            return console.error('unexpected view id',event.nodeId)
         }
         view.$onNativeEvent(event.event)
     }

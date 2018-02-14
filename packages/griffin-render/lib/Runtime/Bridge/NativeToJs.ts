@@ -8,9 +8,9 @@ declare var global:any;
 
 export class NativeToJs {
     public static init() {
-        global.dispatchEventToJs = (vid: string, event: NativeEvent) => {
+        global.dispatchEventToJs = (rid: string, event: NativeEvent) => {
             console.log(JSON.stringify(event))
-            Instance.handleEventFromNative('',vid, event)
+            Instance.handleEventFromNative(rid, event)
         }
 
         global.registerNativeComponent = (tagName:string) =>{
