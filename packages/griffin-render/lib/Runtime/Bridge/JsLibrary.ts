@@ -8,27 +8,27 @@ const initNetwork = () => {
     }
 }
 
-export class JSLibrary{
-    static init(){
+export class JSLibrary {
+    static init() {
         initNetwork()
     }
 
-    static get navigator(){
+    static get navigator() {
         return {
             push: (options: { [key: string]: any }, callback: Function) => {
-                if (!options.url) {
+                if (!options.id) {
                     return
                 }
-                if (options.animated === null) {
+                if (options.animated == null) {
                     options.animated = true
                 }
-                global.NavigatorPush(options.url, options.animated, callback)
+                global.Navigator().push(options.id, options.animated, callback)
             },
             pop: (options: { [key: string]: any }, callback: Function) => {
                 if (options.animated === null) {
                     options.animated = true
                 }
-                global.NavigatorPop(options.animated, callback)
+                global.Navigator().pop(options.animated, callback)
             }
         }
     }
