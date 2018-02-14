@@ -40,6 +40,10 @@ export class RootView {
         return this.$viewsMap[id]
     }
 
+    public viewIds(){
+        return Object.keys(this.$viewsMap)
+    }
+
     public getCoponentById(id:string){
         return this.$componentMap[id]
     }
