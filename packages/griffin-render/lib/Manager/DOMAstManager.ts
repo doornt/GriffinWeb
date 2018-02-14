@@ -1,8 +1,8 @@
 import { IDOMNode, IStyle, IDOMAtrr } from "../Interface/INode"
 import { H5Manager } from "./H5Manager";
-import { RenderNode } from '../Runtime/VDOM/RenderNode';
-import { RootView } from '../Runtime/VDOM/RootView';
-import { Instance } from '../Runtime/VDOM/Instance';
+import { RenderNode } from '../Runtime/DOM/RenderNode';
+import { RootView } from '../Runtime/DOM/RootView';
+import { Instance } from '../Runtime/DOM/Instance';
 
 export class DOMAstManager {
 

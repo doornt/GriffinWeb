@@ -2,11 +2,11 @@
 // import {IPugNode, IPugBlock, IStyle} from "../Interface/INode"
 import { H5Manager } from "../Manager/H5Manager"
 import { DOMAstManager } from "../Manager/DOMAstManager"
-import { H5Component } from "../Runtime/VDOM/H5Component";
+import { H5Component } from "../Runtime/DOM/H5Component"
 import { EventDispatcher } from '../Event/EventDispatcher';
-import { RenderNode } from "../Runtime/VDOM/RenderNode";
+import { RenderNode } from "../Runtime/DOM/RenderNode";
 import { generateID } from '../Utils/NodeID';
-import { Instance } from '../Runtime/VDOM/Instance';
+import { Instance } from '../Runtime/DOM/Instance';
 
 export class BaseComponent extends RenderNode{
 

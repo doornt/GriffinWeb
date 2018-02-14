@@ -1,6 +1,6 @@
 import { BaseComponent } from '../Components/BaseComponent';
 import { JSLibrary } from '../Runtime/Bridge/JsLibrary';
-import { RootView } from '../Runtime/VDOM/RootView';
+import { RootView } from '../Runtime/DOM/RootView';
 
 export class Router{
 

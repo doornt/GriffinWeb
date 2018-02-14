@@ -1,7 +1,7 @@
 import { IDOMAtrr } from "../Interface/INode";
-import { H5Component } from "../Runtime/VDOM/H5Component";
+import { H5Component } from "../Runtime/DOM/H5Component";
 import { Application } from "../Runtime/Application/Application";
-import { RenderNode } from '../Runtime/VDOM/RenderNode';
+import { RenderNode } from '../Runtime/DOM/RenderNode';
 import { BaseComponent } from '../Components/BaseComponent';
 
 export class H5Manager {
@@ -36,5 +36,7 @@ export class H5Manager {
     public registerNativeView(tagName:string){
         
     }
+
+    
 
 }
