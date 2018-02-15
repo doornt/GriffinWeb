@@ -40,11 +40,11 @@ export interface IDOMAtrr{
     name:string,val:string
 }
 
-export interface IDOMNode{
+export interface IASTNode{
     "name":string,
-    "attributes":Array<IDOMAtrr>,
-    "children":Array<IDOMNode>,
-    "id":string,
-    "parentId":string,
-    "val":string  //text 专有
+    "attributes"?:Array<IDOMAtrr>,
+    "children"?:Array<IASTNode>,
+    "id"?:string,
+    "parentId"?:string,
+    "val"?:string  //text 专有
 }

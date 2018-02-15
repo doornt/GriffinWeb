@@ -1,12 +1,12 @@
 
 // import {IPugNode, IPugBlock, IStyle} from "../Interface/INode"
 import { H5Manager } from "../Manager/H5Manager"
-import { DOMAstManager } from "../Manager/DOMAstManager"
 import { H5Component } from "../Runtime/DOM/H5Component"
 import { EventDispatcher } from '../Event/EventDispatcher';
 import { RenderNode } from "../Runtime/DOM/RenderNode";
 import { generateID } from '../Utils/NodeID';
 import { Instance } from '../Runtime/DOM/Instance';
+import { VDOM } from "../Runtime/V-DOM/vdom";
 
 export class BaseComponent extends RenderNode{
 
@@ -17,6 +17,10 @@ export class BaseComponent extends RenderNode{
     protected $styles: any
 
     protected $rootViewId: string
+
+    private $vdom:VDOM
+
+    private $state = {}
 
     constructor() {
         super()
@@ -46,21 +50,14 @@ export class BaseComponent extends RenderNode{
     }
 
     $render() {
-        this.$rebuildAst()
-    }
+        let newVdom = new VDOM(this.$ast,this.$styles,this.$rootViewId,this.$instanceId,this.$state)
 
-    $rebuildAst() {
-        let compileJson = this.$ast({ test: true, list: [1, 2, 3, 4, 5] })
-        let children = new DOMAstManager(compileJson, this.$styles).compile(this.$instanceId,this.$rootViewId)
-        if(children.length == 1){
-            this.$view = children[0]
+        if(this.$vdom){
+            this.$vdom.diff(newVdom)
         }else{
-            this.$view = this.root.createElement("div", [], {}) as H5Component
-            for (let child of children) {
-                this.$view.addChild(child)
-            }
+            this.$view = newVdom.initComponent() as H5Component
         }
-        
+        this.$vdom = newVdom
     }
 
     public get id() {
