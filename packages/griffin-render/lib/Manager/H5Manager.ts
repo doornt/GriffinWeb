@@ -35,6 +35,7 @@ export class H5Manager {
 
 
     public registerNativeView(tagName:string){
+        console.log("register native view",tagName)
         this._registeredClass[tagName] = Div
     }
 
