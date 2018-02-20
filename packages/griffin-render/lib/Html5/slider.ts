@@ -1,4 +1,5 @@
 import { H5Component, ETaskType, TaskManager, ITaskEvent, EViewTask } from "../Runtime/export";
+import { RenderNode } from '../Runtime/DOM/RenderNode';
 
 export class Slider extends H5Component {
 
@@ -31,6 +32,22 @@ export class Slider extends H5Component {
             "auto-play":this.$auto
         }
         super.$createView(props)
+    }
+
+    public addChildren(children:Array<RenderNode>){
+        if (!Array.isArray(children)) {
+            return
+        }
+        
+        for(let child of children){
+            child.style = {
+                "display":"flex",
+                "width":"100%",
+                "height":"100%"
+            }
+        }
+        
+       super.addChildren(children)
     }
 
     
