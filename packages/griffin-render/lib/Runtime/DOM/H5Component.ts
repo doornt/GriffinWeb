@@ -79,13 +79,13 @@ export abstract class H5Component extends RenderNode{
             return console.error("component not found!")
         }
 
-        let fn = this.$master[masterEvent]
+        let fn:Function = this.$master[masterEvent]
 
         if(!fn){
             return console.error(`event ${masterEvent} not registered`)
         }
 
-        fn()
+        fn.call(this.$master)
     }
 
 }

@@ -24,12 +24,12 @@ export class ComponentWrapper extends H5Component {
             }
         }
 
-        let fn = this.$master[masterEvent]
+        let fn:Function = this.$master[masterEvent]
 
         if(!fn){
             return console.error(`event ${masterEvent} not registered`)
         }
 
-        fn()
+        fn.call(this.$master)
     }
 }

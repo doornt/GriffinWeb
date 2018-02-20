@@ -64,6 +64,10 @@ export class BaseComponent extends RenderNode{
         return this.$view.id
     }
 
+    setState(newState:Object){
+        this.$state = Object.assign({},this.$state,newState)
+        this.$render()
+    }
 
 
     onAdded() {

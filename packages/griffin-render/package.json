@@ -1,8 +1,9 @@
 {
   "name": "griffin-render",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "",
   "main": "./dist/gn.js",
+  "types": "./dist/gn.d.ts",
   "directories": {
     "example": "examples",
     "test": "test"

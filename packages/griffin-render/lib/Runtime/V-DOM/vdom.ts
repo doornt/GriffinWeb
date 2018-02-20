@@ -14,6 +14,8 @@ export class VDOM{
     private $rootViewId:string
 
     private $componentId:string
+
+    private $rootView:RenderNode
     
     constructor(astFunc:Function,style:any,rootViewId:string,componentId:string,input={}){
         this.$astFunc = astFunc
@@ -35,11 +37,20 @@ export class VDOM{
     }
 
     public diff(target:VDOM){
-        return true
+        console.log("diff")
+        if(this.$rootView){
+            this.$rootView.removeChildren()
+            let children:Array<RenderNode> = []
+            for(let child of target.root.children){
+                children.push(buildFromVDOM(child,this.$rootViewId,target.styles))
+            }
+            this.$rootView.addChildren(children)
+        }
     }
 
     public initComponent():RenderNode {
-        return buildFromVDOM(this.$root,this.$rootViewId,this.$styles)
+        this.$rootView =  buildFromVDOM(this.$root,this.$rootViewId,this.$styles)
+        return this.$rootView
     }
 
     public get root(){
@@ -48,5 +59,9 @@ export class VDOM{
 
     public get rootViewId(){
         return this.$rootViewId
+    }
+
+    public get styles(){
+        return this.$styles
     }
 }

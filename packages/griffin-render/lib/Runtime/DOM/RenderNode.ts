@@ -30,6 +30,10 @@ export class RenderNode extends EventDispatcher{
         this.setupView()
     }
 
+    public get rootViewId(){
+        return this.$rootViewId
+    }
+
     protected setupView(){
         throw new Error('cannot use RenderNode directly')
     }
@@ -105,6 +109,17 @@ export class RenderNode extends EventDispatcher{
         this.taskManager.send(ETaskType.VIEW, {
             action: EViewTask.ADD_VIEWS,
             addViewsData: { ids: children.map(child=>child.id), parentId: this.id }
+        })
+    }
+
+    public removeChildren(){
+        
+        if(!this.rootViewId){
+            return console.error("remove children root empty")
+        }
+        this.taskManager.send(ETaskType.VIEW, {
+            action: EViewTask.REMOVE_CHILDREN,
+            removeViewsData: { nodeId:this.id ,rootId:this.rootViewId}
         })
     }
 
