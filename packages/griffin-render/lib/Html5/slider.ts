@@ -19,7 +19,7 @@ export class Slider extends H5Component {
                     break
                 }
                 case "auto-play":{
-                    this.$auto = attr.val === "true"
+                    this.$auto = attr.val
                     break
                 }
             }
@@ -33,22 +33,5 @@ export class Slider extends H5Component {
         }
         super.$createView(props)
     }
-
-    public addChildren(children:Array<RenderNode>){
-        if (!Array.isArray(children)) {
-            return
-        }
-        
-        for(let child of children){
-            child.style = {
-                "display":"flex",
-                "width":"100%",
-                "height":"100%"
-            }
-        }
-        
-       super.addChildren(children)
-    }
-
     
 }

@@ -37,7 +37,7 @@ export interface IStyle{
 }
 
 export interface IDOMAtrr{
-    name:string,val:string
+    name:string,val:any
 }
 
 export interface IASTNode{
