@@ -24,7 +24,7 @@ export class VDOM{
 
         this.$componentId = componentId
 
-        this.$root = new VNode('gn_key',{name:'div'},this.$componentId)
+        this.$root = new VNode('gn_key',{name:'$wrapper'},this.$componentId)
 
         this.$compile(input)
     }

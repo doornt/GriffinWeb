@@ -66,7 +66,8 @@ export class BaseComponent extends RenderNode{
 
 
 
-    viewDidLoad() {
+    onAdded() {
+        console.log("on added")
         // this.$renders.map(item=>item.$render())
     }
 
