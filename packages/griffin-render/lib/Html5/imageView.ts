@@ -5,6 +5,8 @@ export class ImageView extends H5Component {
 
     private $url = ""
 
+    private $isLocalFile = false
+
     constructor() {
         super()
     }
@@ -13,9 +15,13 @@ export class ImageView extends H5Component {
         super.$parseAttrs()
         for (let attr of this.$attrArray) {
             switch (attr.name) {
-                case "src":
+                case "src":{
+                    if(attr.val.indexOf('assets://') == 0){
+                        this.$isLocalFile = true
+                    }
                     this.$url = attr.val
                     break
+                }
             }
         }
     }
@@ -23,6 +29,7 @@ export class ImageView extends H5Component {
     protected $createView() {
         let props = <any>{}
         props.url = this.$url
+        props.local = this.$isLocalFile
         super.$createView(props)
     }
 }

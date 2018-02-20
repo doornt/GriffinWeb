@@ -27,7 +27,7 @@ export class Instance{
         let view = root.getViewById(event.nodeId)
         
         if(!view){
-            console.error('unexpected view id',event.nodeId)
+            console.error(`unexpected view id:${event.nodeId}, current root id:${rid}`)
             return console.log('views only in',root.viewIds().join(' '))
         }
         view.$onNativeEvent(event.event)

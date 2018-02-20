@@ -20,10 +20,12 @@ const visitNode = (node: VNode,rootId:string,inStyles)=> {
             break
         default:
             view = visitTag(node,rootId,inStyles)
+            let children = []
             for(let child of node.children){
                 let v2 = visitNode(child,rootId,inStyles)
-                v2 && view.addChild(v2)
+                v2 && children.push(v2)
             }
+            view.addChildren(children)
             break
     }
     if(view){

@@ -37,8 +37,8 @@ export class TaskManager {
                 this.$createView(e.createData)
                 break
 
-            case EViewTask.ADD_SUBVIEW:
-                this.$addSubview(e.addSubviewData)
+            case EViewTask.ADD_VIEWS:
+                this.$addSubview(e.addViewsData)
                 break
 
             default:
@@ -52,9 +52,9 @@ export class TaskManager {
     }
 
 
-    private $addSubview({ parentId, nodeId }) {
-        console.log("addSubview view",parentId,nodeId)
-        return global.addSubview(this.$rootViewId,parentId, nodeId)
+    private $addSubview({ ids, parentId }) {
+        console.log("addSubview view",parentId,ids)
+        return global.addViews(this.$rootViewId,parentId, ids)
     }
 
     private $createRoot() {

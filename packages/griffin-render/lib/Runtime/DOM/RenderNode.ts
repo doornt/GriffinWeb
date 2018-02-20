@@ -88,16 +88,23 @@ export class RenderNode extends EventDispatcher{
         this.$parent = p
     }
 
-    public addChild(child:RenderNode){
-        if (!child) {
+    public addChildren(children:Array<RenderNode>){
+        if (!Array.isArray(children)) {
             return
         }
-        this.children.push(child)
-        child.parent = this
+
+        if(children.length == 0){
+            return
+        }
+        
+        for(let child of children){
+            this.children.push(child)
+            child.parent = this
+        }
         
         this.taskManager.send(ETaskType.VIEW, {
-            action: EViewTask.ADD_SUBVIEW,
-            addSubviewData: { nodeId: child.id, parentId: this.id }
+            action: EViewTask.ADD_VIEWS,
+            addViewsData: { ids: children.map(child=>child.id), parentId: this.id }
         })
     }
 

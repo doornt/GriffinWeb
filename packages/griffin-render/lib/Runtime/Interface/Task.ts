@@ -6,8 +6,7 @@ export enum ETaskType{
 export enum EViewTask{
     CREATE_VIEW="create_view",
     SET_ROOT = "set_root",
-    ADD_CHILD = "add_child",
-    ADD_SUBVIEW = "add_subview",
+    ADD_VIEWS = "add_views",
     
 }
 
@@ -19,14 +18,12 @@ export interface ICreateData{
     styles:any
 }
 
-export interface IAddSubviewData{
-    nodeId:string,
-    parentId:string
-}
-
 export interface ITaskEvent{
     action?:EViewTask,
     createData?:ICreateData,
-    addSubviewData?:IAddSubviewData,
+    addViewsData?:{
+        ids:Array<string>,
+        parentId:string
+    },
     
 }

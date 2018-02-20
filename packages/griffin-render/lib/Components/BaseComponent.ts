@@ -43,9 +43,9 @@ export class BaseComponent extends RenderNode{
         }
     }
     
-    addChild(child:RenderNode){
+    addChildren(children:Array<RenderNode>){
         if(this.$view){
-            this.$view.addChild(child)
+            this.$view.addChildren(children)
         }
     }
 

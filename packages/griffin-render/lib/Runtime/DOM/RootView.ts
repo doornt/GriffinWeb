@@ -63,9 +63,9 @@ export class RootView {
         let t = new T()
         this.$component = t
         t.rootViewId = this.$rootId
-        this.$taskManager.send(ETaskType.VIEW, <ITaskEvent>{
-            action: EViewTask.ADD_SUBVIEW,
-            addSubviewData: { parentId: this.id, nodeId: this.$component.id }
+        this.$taskManager.send(ETaskType.VIEW, {
+            action: EViewTask.ADD_VIEWS,
+            addViewsData: { parentId: this.id, ids: [this.$component.id] }
         })
     }
 
