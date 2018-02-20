@@ -71,9 +71,21 @@ export abstract class H5Component extends RenderNode{
         if(type == "click"){
             masterEvent = this.$click
         }
-        if(masterEvent && this.$master &&  this.$master[masterEvent]){
-            this.$master[masterEvent]()
+        if(!masterEvent){
+            return console.error("cannot read event from native")
         }
+
+        if(!this.$master){
+            return console.error("component not found!")
+        }
+
+        let fn = this.$master[masterEvent]
+
+        if(!fn){
+            return console.error(`event ${masterEvent} not registered`)
+        }
+
+        fn()
     }
 
 }

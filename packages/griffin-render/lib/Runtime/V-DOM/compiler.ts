@@ -27,7 +27,7 @@ const visitNode = (node: VNode,rootId:string,inStyles)=> {
             break
     }
     if(view){
-        // view.componentId = this.$componentId
+        view.componentId = node.componentId
     }
     return view
 }

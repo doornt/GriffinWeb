@@ -107,6 +107,6 @@ export class RenderNode extends EventDispatcher{
 
 
     public $onNativeEvent(type:string){
-        
+      throw new Error('cannot invoke in render node')
     }
 }
