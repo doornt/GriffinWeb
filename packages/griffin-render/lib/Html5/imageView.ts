@@ -1,4 +1,5 @@
 import { H5Component, ETaskType, TaskManager, ITaskEvent, EViewTask } from "../Runtime/export";
+import { Application } from '../Runtime/Application/Application';
 
 
 export class ImageView extends H5Component {
@@ -13,13 +14,16 @@ export class ImageView extends H5Component {
 
     protected $parseAttrs() {
         super.$parseAttrs()
+        let assetsUrl = (Application.env || {}).assetsUrl || ''
         for (let attr of this.$attrArray) {
             switch (attr.name) {
                 case "src":{
                     if(attr.val.indexOf('assets://') == 0){
                         this.$isLocalFile = true
+                        this.$url = (attr.val as string).replace("assets://",assetsUrl)
+                    }else{
+                        this.$url = attr.val
                     }
-                    this.$url = attr.val
                     break
                 }
             }
