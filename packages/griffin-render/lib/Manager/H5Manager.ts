@@ -3,7 +3,7 @@ import { H5Component } from "../Runtime/DOM/H5Component";
 import { Application } from "../Runtime/Application/Application";
 import { RenderNode } from '../Runtime/DOM/RenderNode';
 import { BaseComponent } from '../Components/BaseComponent';
-import { Div } from '../Html5/div';
+import { NativeTag } from '../Html5/native';
 
 export class H5Manager {
 
@@ -36,7 +36,7 @@ export class H5Manager {
 
     public registerNativeView(tagName:string){
         console.log("register native view",tagName)
-        this._registeredClass[tagName] = Div
+        this._registeredClass[tagName] = NativeTag
     }
 
     
