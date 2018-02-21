@@ -2,10 +2,30 @@ declare var global: {
     [k: string]: any
 }
 
-const initNetwork = () => {
-    global.fetch = (url: string, params: { [key: string]: any }, callback: (any) => void) => {
-        global.Nativefetch(url, params, callback)
+
+class Response{
+
+    private $data:any
+
+    private $url:string
+
+    constructor(data,url){
+        this.$data =data
+        this.$url =url
     }
+
+    public json(){
+        return new Promise(r=>r(this.$data))
+    }
+}
+
+const initNetwork = () => {
+    global.fetch = (url,params: { [key: string]: any }) => new Promise((resolve,reject)=>{
+        global.nativeFetch(url, params, (data)=>{
+            let resp = new Response(data,url)
+            resolve(resp)
+        })
+    })
 }
 
 export class JSLibrary {

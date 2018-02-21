@@ -20,7 +20,6 @@ export class BaseComponent extends RenderNode{
 
     private $vdom:VDOM
 
-    private $state = {}
 
     constructor() {
         super()
@@ -50,7 +49,7 @@ export class BaseComponent extends RenderNode{
     }
 
     $render() {
-        let newVdom = new VDOM(this.$ast,this.$styles,this.$rootViewId,this.$instanceId,this.$state)
+        let newVdom = new VDOM(this.$ast,this.$styles,this.$rootViewId,this.$instanceId,this)
 
         if(this.$vdom){
             this.$vdom.diff(newVdom)
@@ -64,8 +63,7 @@ export class BaseComponent extends RenderNode{
         return this.$view.id
     }
 
-    setState(newState:Object){
-        this.$state = Object.assign({},this.$state,newState)
+    public refresh(){
         this.$render()
     }
 
