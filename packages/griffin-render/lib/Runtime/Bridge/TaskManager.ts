@@ -40,6 +40,8 @@ export class TaskManager {
             case EViewTask.ADD_VIEWS:
                 this.$addSubview(e.addViewsData)
                 break
+            case EViewTask.REMOVE_CHILDREN:
+                this.$removeChildren(e.removeViewsData)
 
             default:
                 break
@@ -59,5 +61,11 @@ export class TaskManager {
 
     private $createRoot() {
         return global.createRootView(this.$rootViewId)
+    }
+
+    private $removeChildren({nodeId,rootId}){
+        console.log("remove children",nodeId)
+        return global.removeChildren(rootId,nodeId)
+
     }
 }
