@@ -37,14 +37,15 @@ export class VDOM{
     }
 
     public diff(target:VDOM){
-        console.log("diff")
         if(this.$rootView){
+            console.log('diff')            
             this.$rootView.removeChildren()
             let children:Array<RenderNode> = []
             for(let child of target.root.children){
                 children.push(buildFromVDOM(child,this.$rootViewId,target.styles))
             }
             this.$rootView.addChildren(children)
+            target.transformRootView(this.$rootView)
         }
     }
 
@@ -63,5 +64,9 @@ export class VDOM{
 
     public get styles(){
         return this.$styles
+    }
+
+    public transformRootView(v:RenderNode){
+        this.$rootView = v
     }
 }
