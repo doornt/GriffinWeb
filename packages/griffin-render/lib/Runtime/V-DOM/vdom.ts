@@ -45,7 +45,7 @@ export class VDOM{
                 children.push(buildFromVDOM(child,this.$rootViewId,target.styles))
             }
             this.$rootView.addChildren(children)
-            target.transformRootView(this.$rootView)
+            target.setRootView(this.$rootView)
         }
     }
 
@@ -66,7 +66,7 @@ export class VDOM{
         return this.$styles
     }
 
-    public transformRootView(v:RenderNode){
+    public setRootView(v:RenderNode){
         this.$rootView = v
     }
 }
