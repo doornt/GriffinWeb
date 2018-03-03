@@ -5,7 +5,6 @@ import { H5Component } from "../Runtime/DOM/H5Component"
 import { EventDispatcher } from '../Event/EventDispatcher';
 import { RenderNode } from "../Runtime/DOM/RenderNode";
 import { generateID } from '../Utils/NodeID';
-import { Instance } from '../Runtime/DOM/Instance';
 import { VDOM } from "../Runtime/V-DOM/vdom";
 
 export class BaseComponent extends RenderNode{
@@ -35,11 +34,8 @@ export class BaseComponent extends RenderNode{
         if(!this.$ast){
             throw new Error('template file error or not set')
         }
-        
-        if(this.root){
-            this.root.addComponent(this.$instanceId,this)
-            this.$render()
-        }
+        this.$ctx.root.addComponent(this.$instanceId,this)
+        this.$render()
     }
     
     addChildren(children:Array<RenderNode>){
@@ -49,7 +45,7 @@ export class BaseComponent extends RenderNode{
     }
 
     $render() {
-        let newVdom = new VDOM(this.$ast,this.$styles,this.$rootViewId,this.$instanceId,this)
+        let newVdom = new VDOM(this.$ast,this.$styles,this.$ctx,this.$instanceId,this)
 
         if(this.$vdom){
             this.$vdom.diff(newVdom)

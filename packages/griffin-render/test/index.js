@@ -1,22 +1,4 @@
-const { BaseComponent, launchWithComponent } = require('../dist/gn.js')
+const gn = require('../dist/gn')
 
-let pugJson = require(__dirname + '/../examples/a.pug')
+const app = gn.create()
 
-class TestAComponent extends BaseComponent {
-
-    constructor() {
-        super()
-        this.template = pugJson
-    }
-
-    clickclick() {
-        global.navigator.push({
-            url: 'http://dotwe.org/raw/dist/519962541fcf6acd911986357ad9c2ed.js',
-            animated: true
-        }, event => {
-            modal.toast({ message: 'callback: ' + event })
-        })
-    }
-}
-
-launchWithComponent(new TestAComponent())

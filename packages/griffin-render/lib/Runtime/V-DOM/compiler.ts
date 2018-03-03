@@ -1,7 +1,7 @@
 import { IASTNode } from "../../Interface/INode";
 import { VNode } from "./vnode";
 import { RenderNode } from '../DOM/RenderNode';
-import { Instance } from '../DOM/Instance';
+import { Context } from "../../Application/Context";
 
 export const compile = (nodes:Array<IASTNode>,parent:VNode) => {
     for(let i = 0;i<nodes.length;i++){
@@ -12,17 +12,17 @@ export const compile = (nodes:Array<IASTNode>,parent:VNode) => {
    
 }
 
-const visitNode = (node: VNode,rootId:string,inStyles)=> {
+const visitNode = (node: VNode,ctx:Context,inStyles)=> {
     let view:RenderNode = null
     switch (node.tag) {
         case "text":
-            view = visitText(node,rootId,inStyles)
+            view = visitText(node,ctx,inStyles)
             break
         default:
-            view = visitTag(node,rootId,inStyles)
+            view = visitTag(node,ctx,inStyles)
             let children = []
             for(let child of node.children){
-                let v2 = visitNode(child,rootId,inStyles)
+                let v2 = visitNode(child,ctx,inStyles)
                 v2 && children.push(v2)
             }
             view.addChildren(children)
@@ -34,31 +34,20 @@ const visitNode = (node: VNode,rootId:string,inStyles)=> {
     return view
 }
 
-const visitText = (node: VNode,rootId:string,inStyles):RenderNode => {
-    let root  = Instance.getRootView(rootId)
-    if(!root){
-        console.error('visitText root empty',rootId)
-        return null
-    }
+const visitText = (node: VNode,ctx:Context,inStyles):RenderNode => {
 
     let styles = configStyle(node.data, inStyles)
     node.data.attributes.push({ name: "text", val: node.data.val })
-    let view:RenderNode = root.createElement("text", node.data.attributes, styles)
+    let view:RenderNode = ctx.root.createElement("text", node.data.attributes, styles)
     return view
 }
 
-const visitTag = (node: VNode,rootId:string,inStyles) => {
-    let root  = Instance.getRootView(rootId)
-    if(!root){
-        console.error('visitTag root empty',rootId)
-        return null
-    }
-
+const visitTag = (node: VNode,ctx:Context,inStyles) => {
     let view:RenderNode = null
     let styles = configStyle(node.data, inStyles)
     switch (node.tag) {
         default:
-            view = root.createElement(node.tag, node.data.attributes, styles) 
+            view = ctx.root.createElement(node.tag, node.data.attributes, styles) 
             break
     }
    
@@ -83,7 +72,7 @@ const configStyle = (node: IASTNode, inStyles: any) => {
     return styles
 }
 
-export const buildFromVDOM = (root:VNode,rootViewId:string,styles) => {
-    let view = visitNode(root,rootViewId,styles)
+export const buildFromVDOM = (root:VNode,ctx:Context,styles) => {
+    let view = visitNode(root,ctx,styles)
     return view
 }

@@ -2,6 +2,7 @@ import { IASTNode } from "../../Interface/INode";
 import { compile, buildFromVDOM } from "./compiler";
 import { VNode } from './vnode';
 import { RenderNode } from '../DOM/RenderNode';
+import { Context } from "../../Application/Context";
 
 export class VDOM{
 
@@ -11,18 +12,18 @@ export class VDOM{
 
     private $root:VNode
 
-    private $rootViewId:string
+    private $ctx:Context
 
     private $componentId:string
 
     private $rootView:RenderNode
     
-    constructor(astFunc:Function,style:any,rootViewId:string,componentId:string,input={}){
+    constructor(astFunc:Function,style:any,ctx:Context,componentId:string,input={}){
         this.$astFunc = astFunc
 
         this.$styles = style
 
-        this.$rootViewId = rootViewId
+        this.$ctx = ctx
 
         this.$componentId = componentId
 
@@ -42,7 +43,7 @@ export class VDOM{
             this.$rootView.removeChildren()
             let children:Array<RenderNode> = []
             for(let child of target.root.children){
-                children.push(buildFromVDOM(child,this.$rootViewId,target.styles))
+                children.push(buildFromVDOM(child,this.$ctx,target.styles))
             }
             this.$rootView.addChildren(children)
             target.setRootView(this.$rootView)
@@ -50,7 +51,7 @@ export class VDOM{
     }
 
     public initComponent():RenderNode {
-        this.$rootView =  buildFromVDOM(this.$root,this.$rootViewId,this.$styles)
+        this.$rootView =  buildFromVDOM(this.$root,this.$ctx,this.$styles)
         return this.$rootView
     }
 
@@ -58,8 +59,8 @@ export class VDOM{
         return this.$root
     }
 
-    public get rootViewId(){
-        return this.$rootViewId
+    public get context(){
+        return this.$ctx
     }
 
     public get styles(){

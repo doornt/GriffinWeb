@@ -1,4 +1,4 @@
-import { H5Component, ETaskType, TaskManager, ITaskEvent, EViewTask } from "../Runtime/export";
+import { H5Component } from "../Runtime/export";
 import { RenderNode } from '../Runtime/DOM/RenderNode';
 
 export class Slider extends H5Component {

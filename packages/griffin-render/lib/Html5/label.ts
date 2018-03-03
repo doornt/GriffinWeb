@@ -1,4 +1,4 @@
-import { H5Component, ETaskType, TaskManager, ITaskEvent, EViewTask } from "../Runtime/export";
+import { H5Component} from "../Runtime/export";
 
 
 export class Label extends H5Component {

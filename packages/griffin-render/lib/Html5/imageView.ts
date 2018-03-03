@@ -1,6 +1,5 @@
-import { H5Component, ETaskType, TaskManager, ITaskEvent, EViewTask } from "../Runtime/export";
-import { Application } from '../Runtime/Application/Application';
-
+import { H5Component} from "../Runtime/export";
+import { Runtime } from '../Runtime/runtime';
 
 export class ImageView extends H5Component {
 
@@ -14,7 +13,7 @@ export class ImageView extends H5Component {
 
     protected $parseAttrs() {
         super.$parseAttrs()
-        let assetsUrl = (Application.env || {}).assetsUrl || ''
+        let assetsUrl = (Runtime.instance.env || {}).assetsUrl || ''
         for (let attr of this.$attrArray) {
             switch (attr.name) {
                 case "src":{

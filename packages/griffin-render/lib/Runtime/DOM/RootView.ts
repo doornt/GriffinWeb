@@ -1,4 +1,3 @@
-import { TaskManager } from "../Bridge/TaskManager";
 import { ETaskType, ITaskEvent, EViewTask } from "../Interface/Task";
 import { generateID } from "../../Utils/NodeID";
 import { H5Component } from "./H5Component";
@@ -7,7 +6,7 @@ import { BaseComponent } from '../../Components/BaseComponent';
 import { IDOMAtrr } from '../../Interface/INode';
 import { H5Manager } from '../../Manager/H5Manager';
 import { RenderNode } from "./RenderNode";
-import { Instance } from './Instance';
+import { Context } from '../../Application/Context';
 
 export class RootView {
 
@@ -19,22 +18,32 @@ export class RootView {
 
     private $componentMap:{[id:string]:BaseComponent} = {}
 
-    private $taskManager:TaskManager
+    private $ctx:Context
+
+    private $componentClz:typeof BaseComponent
 
     private constructor() {
         this.$rootId = generateID()
-        this.$taskManager = TaskManager.create(this.$rootId)
-        this.$taskManager.send(ETaskType.ROOT)
-        Instance.addRootView(this.$rootId,this)
     }
 
     public get id() {
         return this.$rootId
     }
 
-    public get taskManager():TaskManager{
-        return this.$taskManager
+    public attach(ctx:Context){
+        this.$ctx = ctx
+        this.$ctx.task.postMessage('root',null)
+
+        let t = new this.$componentClz()
+        
+        this.$component = t
+        
+        t.attach(ctx)
+
+        this.$ctx.task.postMessage('add',{ parentId: this.id, ids: [this.$component.id] })
+        
     }
+
 
     public getViewById(id:string){
         return this.$viewsMap[id]
@@ -60,13 +69,8 @@ export class RootView {
     }
 
     public set component(T: typeof BaseComponent) {
-        let t = new T()
-        this.$component = t
-        t.rootViewId = this.$rootId
-        this.$taskManager.send(ETaskType.VIEW, {
-            action: EViewTask.ADD_VIEWS,
-            addViewsData: { parentId: this.id, ids: [this.$component.id] }
-        })
+        this.$componentClz = T
+        // 
     }
 
     public addComponent(id:string,c:BaseComponent){
@@ -80,13 +84,22 @@ export class RootView {
             view.tagName = tag
             view.attr = attrs
             view.style = styles
-            view.rootViewId = this.$rootId
+            view.attach(this.$ctx)
             this.$viewsMap[view.id] = view
             return view
         }else{
             return null
         }
         
+    }
+
+    public onEvent(event: NativeEvent) {
+        let view = this.getViewById(event.nodeId)
+        if(!view){
+            console.error(`unexpected view id:${event.nodeId}, current root id:${this.id}`)
+            return console.log('views only in',this.viewIds().join(' '))
+        }
+        view.$onNativeEvent(event.event)
     }
 
 

@@ -1,11 +1,5 @@
-import { Application } from "./Runtime/Application/Application";
-// const launchWithComponent = (view: BaseComponent) => {
-//     Application.instance.runWithModule(view)
-// }
+import {App} from './Application/index'
+import {Router} from './Application/Router'
+import { BaseComponent } from './Components/BaseComponent';
 
-Application.instance.init();
-
-(<any>global).onRuntimeLoadFinish()
-
-export { BaseComponent } from "./Components/BaseComponent"
-export {Router} from './Router/index'
+export { App as default,Router,BaseComponent}

@@ -1,9 +1,8 @@
 import { EventDispatcher } from '../../Event/EventDispatcher';
-import { TaskManager, ETaskType, EViewTask } from '../export';
 import { BaseComponent } from '../../Components/BaseComponent';
 import { IDOMAtrr } from '../../Interface/INode';
-import { Instance } from './Instance';
 import { RootView } from './RootView';
+import { Context } from '../../Application/Context';
 
 export class RenderNode extends EventDispatcher{
     protected $tagName:string
@@ -16,22 +15,15 @@ export class RenderNode extends EventDispatcher{
 
     protected $master:BaseComponent
 
-    protected $rootViewId: string
+    protected $ctx: Context
 
     protected $attrArray: Array<IDOMAtrr>
 
     protected $style = {}
 
-    public set rootViewId(id:string){
-        if(this.$rootViewId){
-            return
-        }
-        this.$rootViewId = id
+    public attach(ctx:Context){
+        this.$ctx = ctx
         this.setupView()
-    }
-
-    public get rootViewId(){
-        return this.$rootViewId
     }
 
     protected setupView(){
@@ -39,7 +31,7 @@ export class RenderNode extends EventDispatcher{
     }
 
     public set componentId(id){
-        let rootView:RootView = Instance.getRootView(this.$rootViewId)
+        let rootView:RootView = this.$ctx.root
         if(rootView){
             this.$master = rootView.getCoponentById(id)
         }
@@ -56,9 +48,6 @@ export class RenderNode extends EventDispatcher{
         }
     }
 
-    protected get taskManager(){
-        return Instance.getRootView(this.$rootViewId).taskManager
-    }
 
     protected get master(){
         return this.$master
@@ -96,37 +85,20 @@ export class RenderNode extends EventDispatcher{
         if (!Array.isArray(children)) {
             return
         }
-
         if(children.length == 0){
             return
         }
-        
         for(let child of children){
             this.children.push(child)
             child.parent = this
         }
+        this.$ctx.task.postMessage('add', { ids: children.map(child=>child.id), parentId: this.id })
         
-        this.taskManager.send(ETaskType.VIEW, {
-            action: EViewTask.ADD_VIEWS,
-            addViewsData: { ids: children.map(child=>child.id), parentId: this.id }
-        })
     }
 
     public removeChildren(){
-        
-        if(!this.rootViewId){
-            return console.error("remove children root empty")
-        }
-        this.taskManager.send(ETaskType.VIEW, {
-            action: EViewTask.REMOVE_CHILDREN,
-            removeViewsData: { nodeId:this.id ,rootId:this.rootViewId}
-        })
+        this.$ctx.task.postMessage('removeChildren',{ nodeId:this.id})
     }
-
-    public get root(){
-        return Instance.getRootView(this.$rootViewId)
-    }
-
 
     public $onNativeEvent(type:string){
       throw new Error('cannot invoke in render node')

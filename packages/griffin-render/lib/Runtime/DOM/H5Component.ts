@@ -1,6 +1,3 @@
-// import {IPugNode, IPugAttr} from "../../Interface/INode"
-import { TaskManager } from "../Bridge/TaskManager";
-import { ETaskType, EViewTask, ITaskEvent } from "../Interface/Task";
 import { generateID } from "../../Utils/NodeID";
 import { IDOMAtrr } from "../../Interface/INode";
 import { EventDispatcher } from '../../Event/EventDispatcher';
@@ -51,14 +48,9 @@ export abstract class H5Component extends RenderNode{
         if(this.$click){
             props["clickable"] = true
         }
-        
-        if(this.taskManager){
-            this.taskManager.send(ETaskType.VIEW, <ITaskEvent>{
-                action: EViewTask.CREATE_VIEW,
-                createData: { nodeId: this.id, styles: this.$style, props, type: this.tagName }
-            })
-            this.$created = true
-        }
+
+        this.$ctx.task.postMessage('view',{ nodeId: this.id, styles: this.$style, props, type: this.tagName })
+        this.$created = true
     }
 
     protected $render() {
