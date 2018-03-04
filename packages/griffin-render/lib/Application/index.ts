@@ -1,10 +1,10 @@
 import {Router} from './Router'
 import {Context} from './Context'
-import { JSLibrary } from '../Runtime/Bridge/JsLibrary';
 import * as Html5 from "../Html5/index"
 import { EventCenter } from './Event';
 import { H5Manager } from '../Manager/H5Manager';
 import { Runtime } from '../Runtime/runtime';
+import { Response } from './CommonClass';
 declare var global:any
 
 let flag = false
@@ -23,9 +23,20 @@ export class App {
         }
         flag = true
         this.setConsole()
-        JSLibrary.init()
         Html5.setup()
+        this.$setupFetch()
+
         Runtime.instance.setApplication(this)
+        
+    }
+
+    private $setupFetch(){
+        global.fetch = (url,params: { [key: string]: any }) => new Promise((resolve,reject)=>{
+            global.nativeFetch(url, params, (data)=>{
+                let resp = new Response(data,url)
+                resolve(resp)
+            })
+        })
     }
 
     public get env() {

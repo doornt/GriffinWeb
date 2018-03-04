@@ -1,21 +1,12 @@
 import { BaseComponent } from '../Components/BaseComponent';
 import { RootView } from '../Runtime/DOM/RootView';
 import { TaskCenter } from './Task';
-import { JSLibrary } from '../Runtime/Bridge/JsLibrary';
-
-class Request{
-    public path:string
-
-    public params:any = {}
-
-    constructor(){
-
-    }
-}
+import { CtxRequest } from './CommonClass';
+import { Navigator } from './Navigator';
 
 export class Context{
 
-    private $request:Request = new Request()
+    private $request:CtxRequest = new CtxRequest()
 
     private $next = false
 
@@ -37,6 +28,10 @@ export class Context{
 
     public get root(){
         return this.$rootView
+    }
+
+    public get request(){
+        return this.$request
     }
 
     constructor(path:string){
@@ -63,6 +58,8 @@ export class Context{
         this.$rootView = RootView.create()
         this.$rootView.component = clz
         this.$rootView.attach(this)
-        JSLibrary.navigator.push({id:this.root.id},()=>{})
+        if(this.request.method == 'push'){
+            Navigator.instance.push(this)
+        }
     }
 }
