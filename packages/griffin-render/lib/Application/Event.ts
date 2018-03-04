@@ -2,12 +2,18 @@ declare var global:any
 
 export class EventCenter{
 
+    private static $inst = new EventCenter()
+
     private $listeners:{
         [type:string]:Array<Function>
     } = {}
 
-    public constructor(){
+    private constructor(){
         this.$init()
+    }
+
+    public static get instance(){
+        return this.$inst
     }
 
     private $init(){
@@ -33,11 +39,23 @@ export class EventCenter{
         }
     }
 
-    public emit(type:'start'){
-        global.onRuntimeLoadFinish()
+    public emit(type:'start'|'url',...args){
+        switch(type){
+            case 'start':{
+                global.onRuntimeLoadFinish()
+                break
+            }
+            case 'url':{
+                let arry = this.$listeners.url || []
+                for(let cb of arry){
+                    cb(...args)
+                }
+                break
+            }
+        }
     }
 
-    public on(type:'loaded'|'view'|'register',cb:Function){
+    public on(type:'loaded'|'view'|'register'|'url',cb:Function){
         let arry = this.$listeners[type] || []
         arry.push(cb)
         this.$listeners[type] = arry

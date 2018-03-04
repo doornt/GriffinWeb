@@ -15,7 +15,7 @@ export class App {
 
     private $sessions:Array<Context> = []
 
-    private $event:EventCenter = new EventCenter
+    private $event:EventCenter = EventCenter.instance
 
     public constructor(){
         if(flag){
@@ -60,8 +60,8 @@ export class App {
         }
     }
 
-    private $onRequest(path:string,ctx:Context){
-        let reg = new RegExp(path)
+    private $onRequest(ctx:Context){
+        let reg = new RegExp(ctx.request.path)
         let flag = false
         for(let router of this.$routes){
             for(let p of router.pathes){
@@ -80,6 +80,7 @@ export class App {
         this.$sessions.push(ctx)
     }
 
+
     public use(router:Router){
         this.$routes.push(router)
     }
@@ -91,7 +92,7 @@ export class App {
         })
 
         this.$event.on('loaded',()=>{
-            this.$onRequest('/',new Context('/'))
+            this.$onRequest(new Context('/'))
         })
 
         this.$event.emit('start')
@@ -104,6 +105,11 @@ export class App {
                     break
                 }
             }
+        })
+
+        this.$event.on('url',(path:string,data:any)=>{
+            let ctx = new Context(path)
+            this.$onRequest(ctx)
         })
         
     }

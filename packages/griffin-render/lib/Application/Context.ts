@@ -3,6 +3,7 @@ import { RootView } from '../Runtime/DOM/RootView';
 import { TaskCenter } from './Task';
 import { CtxRequest } from './CommonClass';
 import { Navigator } from './Navigator';
+import { EventCenter } from './Event';
 
 export class Context{
 
@@ -11,6 +12,8 @@ export class Context{
     private $next = false
 
     private $rootView:RootView
+
+    private $event:EventCenter = EventCenter.instance
 
     private $task = new TaskCenter(this)
 
@@ -44,6 +47,14 @@ export class Context{
 
     public next(){
         this.$next = true
+    }
+
+    public open(path:string,params){
+        this.$event.emit('url',path,params)
+    }
+
+    public pop(){
+        Navigator.instance.pop()
     }
 
     public get hasNext(){

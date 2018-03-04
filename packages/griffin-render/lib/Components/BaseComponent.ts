@@ -19,7 +19,6 @@ export class BaseComponent extends RenderNode{
 
     private $vdom:VDOM
 
-
     constructor() {
         super()
         this.$instanceId = generateID()
@@ -61,6 +60,14 @@ export class BaseComponent extends RenderNode{
 
     public refresh(){
         this.$render()
+    }
+
+    public openUrl(path:string,params?:any){
+        this.$ctx.open(path,params)
+    }
+
+    public goback(){
+        this.$ctx.pop()
     }
 
 
