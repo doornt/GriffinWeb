@@ -4,7 +4,10 @@
         "moduleResolution":"node",
         "outDir": "./dist",
         "declaration":true,
-        "module": "commonjs",
+        "baseUrl": ".",
+        "paths": {
+            "gn":["2.0"]
+        },
         "lib": [
             "es5",
             "es2015",
@@ -13,6 +16,7 @@
     },
     "exclude": [
         "node_modules",
-        "dist"
+        "dist",
+        "lib"
     ]
 }
