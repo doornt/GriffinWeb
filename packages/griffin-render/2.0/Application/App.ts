@@ -14,6 +14,18 @@ export class GN{
             let ctx = new Context(null)
             ctx.push('/')
         })
+
+        EventSystem.instance.dom.onUrl((url:string)=>{
+            let matches = []
+            for(let route of this._routes){
+                let list = route.test(url)
+                matches.concat(list)
+            }
+
+            for(let route of matches){
+                // route.match()
+            }
+        })
         
     }
 }

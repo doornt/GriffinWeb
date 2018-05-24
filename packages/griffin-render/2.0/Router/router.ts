@@ -17,7 +17,7 @@ export class Router{
         })
     }
 
-    private match(path:string){
+    public test(path:string){
         return this.pathes.filter(item=>{
             if(item.reg.test(path)){
                 return true
