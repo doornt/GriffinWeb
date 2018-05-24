@@ -8,13 +8,14 @@ var postcss = require("postcss")
 var gen = require("./generate-code")
 
 
-module.exports = function loader(content,isDebug = false) {
+module.exports = function loader(content, isDebug = false) {
     this.cacheable && this.cacheable();
     content = require('./compiler').compile(content)
+
     let styles = content.nodes.filter(node => node.name == "style")
     let AstFunc = gen(content)
 
-   
+
 
     let strs = styles.map(node => {
         return node.block.nodes.map(n => n.val).join('')
@@ -35,7 +36,7 @@ module.exports = function loader(content,isDebug = false) {
     let styleRuntime = 'let styleJson = ' + JSON.stringify(styleJson) + ';'
     let AstFuncRuntime = 'let AstFuncStr = ' + AstFunc;
     let runtime = ";let res = {style:styleJson,AstFunc:AstFuncStr}"
-    if(isDebug){
+    if (isDebug) {
         return "(function(){" + styleRuntime + AstFuncRuntime + runtime + ";return res;})();";
     }
     // this.value = res;

@@ -1,24 +1,24 @@
-import {Router} from './Router'
-import {Context} from './Context'
+import { Router } from './Router'
+import { Context } from './Context'
 import * as Html5 from "../Html5/index"
 import { EventCenter } from './Event';
 import { H5Manager } from '../Manager/H5Manager';
 import { Runtime } from '../Runtime/runtime';
 import { Response } from './CommonClass';
-declare var global:any
+declare var global: any
 
 let flag = false
 
 export class App {
-    
+
     private $routes: Array<Router> = []
 
-    private $sessions:Array<Context> = []
+    private $sessions: Array<Context> = []
 
-    private $event:EventCenter = EventCenter.instance
+    private $event: EventCenter = EventCenter.instance
 
-    public constructor(){
-        if(flag){
+    public constructor() {
+        if (flag) {
             throw new Error('cannot init twice')
         }
         flag = true
@@ -27,13 +27,13 @@ export class App {
         this.$setupFetch()
 
         Runtime.instance.setApplication(this)
-        
+
     }
 
-    private $setupFetch(){
-        global.fetch = (url,params: { [key: string]: any }) => new Promise((resolve,reject)=>{
-            global.nativeFetch(url, params, (data)=>{
-                let resp = new Response(data,url)
+    private $setupFetch() {
+        global.fetch = (url, params: { [key: string]: any }) => new Promise((resolve, reject) => {
+            global.nativeFetch(url, params, (data) => {
+                let resp = new Response(data, url)
                 resolve(resp)
             })
         })
@@ -43,37 +43,37 @@ export class App {
         return (<any>global).Environment
     }
 
-    public setConsole(){
+    public setConsole() {
         global.console = {
-            log:(...args)=>{
-                global.NativeLog(...args,"__LOG")
+            log: (...args) => {
+                global.NativeLog(...args, "__LOG")
             },
-            info:(...args)=>{
-                global.NativeLog(...args,"__INFO")
+            info: (...args) => {
+                global.NativeLog(...args, "__INFO")
             },
-            warn:(...args)=>{
-                global.NativeLog(...args,"__WARN")
+            warn: (...args) => {
+                global.NativeLog(...args, "__WARN")
             },
-            error:(...args)=>{
-                global.NativeLog(...args,"__ERROR")
+            error: (...args) => {
+                global.NativeLog(...args, "__ERROR")
             }
         }
     }
 
-    private $onRequest(ctx:Context){
+    private $onRequest(ctx: Context) {
         let reg = new RegExp(ctx.request.path)
         let flag = false
-        for(let router of this.$routes){
-            for(let p of router.pathes){
-                if(reg.test(p)){
+        for (let router of this.$routes) {
+            for (let p of router.pathes) {
+                if (reg.test(p)) {
                     router.getRuntime(p)(ctx)
-                    if(!ctx.hasNext){
+                    if (!ctx.hasNext) {
                         flag = true
                         break
                     }
                 }
             }
-            if(flag){
+            if (flag) {
                 break
             }
         }
@@ -81,37 +81,37 @@ export class App {
     }
 
 
-    public use(router:Router){
+    public use(router: Router) {
         this.$routes.push(router)
     }
 
-    public run(){
+    public run() {
 
-        this.$event.on('register',(tagName:string)=>{
+        this.$event.on('register', (tagName: string) => {
             H5Manager.instance.registerNativeView(tagName)
         })
 
-        this.$event.on('loaded',()=>{
+        this.$event.on('loaded', () => {
             this.$onRequest(new Context('/'))
         })
 
         this.$event.emit('start')
-        
 
-        this.$event.on('view',(rid:string,data:any)=>{
-            for(let ctx of this.$sessions){
-                if(ctx.rid == rid){
+
+        this.$event.on('view', (rid: string, data: any) => {
+            for (let ctx of this.$sessions) {
+                if (ctx.rid == rid) {
                     ctx.onMessage(data)
                     break
                 }
             }
         })
 
-        this.$event.on('url',(path:string,data:any)=>{
+        this.$event.on('url', (path: string, data: any) => {
             let ctx = new Context(path)
             this.$onRequest(ctx)
         })
-        
+
     }
 }
 

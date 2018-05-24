@@ -1,13 +1,15 @@
 {
     "compilerOptions": {
         "target": "es5",
-        "moduleResolution":"node",
+        "moduleResolution": "node",
         "outDir": "./dist",
         "declaration":true,
         "baseUrl": ".",
         "paths": {
             "gn":["2.0"]
         },
+        "module": "commonjs",
+        "sourceMap": true,
         "lib": [
             "es5",
             "es2015",

@@ -7,7 +7,7 @@ import { RenderNode } from "../Runtime/DOM/RenderNode";
 import { generateID } from '../Utils/NodeID';
 import { VDOM } from "../Runtime/V-DOM/vdom";
 
-export class BaseComponent extends RenderNode{
+export class BaseComponent extends RenderNode {
 
     private $ast: Function
 
@@ -17,38 +17,39 @@ export class BaseComponent extends RenderNode{
 
     protected $rootViewId: string
 
-    private $vdom:VDOM
+    private $vdom: VDOM
 
     constructor() {
         super()
         this.$instanceId = generateID()
     }
 
-    protected set template(pugData:any){
+    protected set template(pugData: any) {
         this.$ast = pugData.AstFunc
+        console.log(JSON.stringify(this.$ast))
         this.$styles = pugData.style
     }
 
-    protected setupView(){
-        if(!this.$ast){
+    protected setupView() {
+        if (!this.$ast) {
             throw new Error('template file error or not set')
         }
-        this.$ctx.root.addComponent(this.$instanceId,this)
+        this.$ctx.root.addComponent(this.$instanceId, this)
         this.$render()
     }
-    
-    addChildren(children:Array<RenderNode>){
-        if(this.$view){
+
+    addChildren(children: Array<RenderNode>) {
+        if (this.$view) {
             this.$view.addChildren(children)
         }
     }
 
     $render() {
-        let newVdom = new VDOM(this.$ast,this.$styles,this.$ctx,this.$instanceId,this)
-
-        if(this.$vdom){
+        let newVdom = new VDOM(this.$ast, this.$styles, this.$ctx, this.$instanceId, this)
+        // console.log('newVom', JSON.stringify(newVdom))
+        if (this.$vdom) {
             this.$vdom.diff(newVdom)
-        }else{
+        } else {
             this.$view = newVdom.initComponent() as H5Component
         }
         this.$vdom = newVdom
@@ -58,15 +59,15 @@ export class BaseComponent extends RenderNode{
         return this.$view.id
     }
 
-    public refresh(){
+    public refresh() {
         this.$render()
     }
 
-    public openUrl(path:string,params?:any){
-        this.$ctx.open(path,params)
+    public openUrl(path: string, params?: any) {
+        this.$ctx.open(path, params)
     }
 
-    public goback(){
+    public goback() {
         this.$ctx.pop()
     }
 

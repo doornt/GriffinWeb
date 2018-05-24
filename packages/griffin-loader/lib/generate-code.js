@@ -13,7 +13,7 @@ var walk = require('acorn/dist/walk');
 class Generate {
 
 
-    bufferChildren(parentVar,nodeVar) {
+    bufferChildren(parentVar, nodeVar) {
         this.buf.push(`${parentVar}.children = ${parentVar}.children || []`)
         this.buf.push(`${parentVar}.children.push(${nodeVar})`)
     }
@@ -44,50 +44,52 @@ class Generate {
         this.nodeValStack = []
         this.rootVals = []
         this.allNodes = []
+        this.exclude = ["Object", 'pug_interp']
     }
 
-    nextId(){
-        this.id = this.id? (this.id + 1) : 1000
+    nextId() {
+        this.id = this.id ? (this.id + 1) : 1000
         return this.id
     }
 
-    nextVarName(){
+    nextVarName() {
         this.varName = '$$_' + this.varCount++
         return this.varName
     }
 
-    getParentAndPush(nodeVar){
+    getParentAndPush(nodeVar) {
         this.allNodes.push(nodeVar)
-        let parentVar = this.nodeValStack.length?this.nodeValStack[this.nodeValStack.length - 1]:null
+        let parentVar = this.nodeValStack.length ? this.nodeValStack[this.nodeValStack.length - 1] : null
         this.nodeValStack.push(nodeVar)
         return parentVar
     }
 
     compile() {
 
-        let exclude = ["Object", 'pug_interp']
+
         this.visit(this.ast)
         this.resetText()
-        
+
         this.buf.push(`let res = [${this.rootVals.join(',')}];\nreturn res;
         `)
         let js = this.buf.join('\n')
 
+        var that = this
         var vars = detect(js).map(function (global) {
-                return global.name;
-            })
+            return global.name;
+        })
             .filter(function (v) {
-                return exclude.indexOf(v) === -1 && v.indexOf('$$_') === -1 &&
+                return that.exclude.indexOf(v) === -1 && v.indexOf('$$_') === -1 &&
                     v !== 'undefined' &&
                     v !== 'this'
             })
-        
+
         let runtimeJs = `function template({${vars.join(',')}}) {var attrs=[],pug_interp, pug_idMap = {};` + js + ";}";
 
         return runtimeJs
     }
 
-    resetText(){
+    resetText() {
         //这里得重写
         this.buf.push(`
             let $$_roots = [${this.rootVals.join(',')}];
@@ -96,7 +98,7 @@ class Generate {
                     return
                 }
                 if(node.children.length && node.children.filter(n=>n.name == 'text').length == node.children.length){
-                    node.val = node.children.map(n=>n.val).join('')
+                    node.val = node.children.map(n => n.val).join('')
                     node.name = 'text'
                     node.children = []
                 }else{
@@ -122,7 +124,7 @@ class Generate {
         }
         let attributes = []
         node.attributes = attributes
-        
+
         let nodeVar = this.nextVarName()
         let parentVar = this.getParentAndPush(nodeVar)
 
@@ -133,13 +135,41 @@ class Generate {
         }
         this.buf.push(`${nodeVar}.attributes = attrs`)
         // this.buf.push(`pug_idMap[${node.id}] = ${nodeVar} `)
-        parentVar && this.bufferChildren(parentVar,nodeVar)
-        if (!tag.selfClosing) {
-            this.visit(tag.block);
+        parentVar && this.bufferChildren(parentVar, nodeVar)
+
+        // handle for listview
+        if (tag.name === "listView") {
+            if (tag.selfClosing) {
+                console.log("listview cannot be selfClosing")
+            } else {
+                if (tag.block.nodes.length != 1 || tag.block.nodes[0].type !== "Each") {
+                    console.log("listview should followed by each loop")
+                } else {
+                    if (tag.block.nodes[0].selfClosing) {
+                        console.log("listview each cannot be selfClosing")
+                    } else {
+                        // this.buf.push(`var list = ${JSON.stringify(tag.block.nodes[0].obj)}`)
+                        this.buf.push(`attrs.push({name: "listData",val: ${tag.block.nodes[0].obj}})`)
+                        this.buf.push(`attrs.push({name: "listItem",val: ${JSON.stringify(tag.block.nodes[0].val)}})`)
+
+                        for (var i = 0; i < tag.block.nodes[0].block.nodes.length; ++i) {
+                            if (tag.block.nodes[0].block.nodes[i].name === "row") {
+                                this.visit(tag.block.nodes[0].block.nodes[i]);
+                            }
+                        }
+                    }
+                }
+            }
+
+        } else {
+            if (!tag.selfClosing) {
+                this.visit(tag.block);
+            }
         }
+
         this.nodeValStack.pop()
 
-        if(!parentVar){
+        if (!parentVar) {
             this.rootVals.push(nodeVar)
         }
     }
@@ -155,7 +185,7 @@ class Generate {
 
         this.buf.push(`let ${nodeVar} = ${JSON.stringify(node)}`)
 
-        parentVar && this.bufferChildren(parentVar,nodeVar)
+        parentVar && this.bufferChildren(parentVar, nodeVar)
 
         this.nodeValStack.pop()
 
@@ -180,7 +210,7 @@ class Generate {
 
     visitEach(each) {
         var indexVarName = each.key || 'pug_index' + this.eachCount;
-        
+
         this.eachCount++;
 
         this.buf.push('' +
@@ -247,22 +277,23 @@ class Generate {
     // }
 
     visitCode(code) {
-        if(code.buffer){
+        if (code.buffer) {
             var node = {
                 name: "text"
             }
             let nvar = this.nextVarName()
             let parentVar = this.getParentAndPush(nvar)
 
-            this.buf.push(`let ${nvar} = ${JSON.stringify(node)};${nvar}.val = ${code.val.trim()};`)
-            parentVar && this.bufferChildren(parentVar,nvar)
+            this.buf.push(`let ${nvar} = ${JSON.stringify(node)};${nvar}.val = "${code.val.trim()}";`)
+
+            parentVar && this.bufferChildren(parentVar, nvar)
 
             this.nodeValStack.pop()
-        }else{
+        } else {
             this.buf.push(code.val);
         }
 
-        if(code.block){
+        if (code.block) {
             if (!code.buffer) this.buf.push('{');
             this.visit(code.block);
             if (!code.buffer) this.buf.push('}');
