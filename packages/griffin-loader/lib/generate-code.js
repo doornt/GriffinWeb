@@ -148,7 +148,8 @@ class Generate {
                     if (tag.block.nodes[0].selfClosing) {
                         console.log("listview each cannot be selfClosing")
                     } else {
-                        this.buf.push(`attrs.push({name: "listData",val: ${JSON.stringify(tag.block.nodes[0].obj)}})`)
+                        // this.buf.push(`var list = ${JSON.stringify(tag.block.nodes[0].obj)}`)
+                        this.buf.push(`attrs.push({name: "listData",val: ${tag.block.nodes[0].obj}})`)
                         this.buf.push(`attrs.push({name: "listItem",val: ${JSON.stringify(tag.block.nodes[0].val)}})`)
 
                         for (var i = 0; i < tag.block.nodes[0].block.nodes.length; ++i) {
@@ -283,7 +284,7 @@ class Generate {
             let nvar = this.nextVarName()
             let parentVar = this.getParentAndPush(nvar)
 
-            this.buf.push(`let ${nvar} = ${JSON.stringify(node)};${nvar}.val = ${code.val.trim()};`)
+            this.buf.push(`let ${nvar} = ${JSON.stringify(node)};${nvar}.val = "${code.val.trim()}";`)
 
             parentVar && this.bufferChildren(parentVar, nvar)
 
