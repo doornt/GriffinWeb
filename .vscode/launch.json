@@ -14,8 +14,8 @@
 			"request": "launch",
 			"preLaunchTask": "compile-render",
 			"name": "render test",
-			"program": "${workspaceRoot}/packages/griffin-render/dist/bundle.js",
-			"cwd": "${workspaceRoot}/packages/griffin-render/dist",
+			"program": "${workspaceRoot}/packages/griffin-render/test/index.js",
+			"cwd": "${workspaceRoot}/packages/griffin-render/test",
 			"protocol": "inspector"
 		}
 	]

@@ -2,6 +2,7 @@ import {Router} from '../Router/router'
 import { Context } from './Context';
 import { EventSystem } from '../Event/EventSystem';
 
+declare var global:any;
 export class GN{
     private _routes:Array<Router> = []
 
@@ -19,12 +20,17 @@ export class GN{
             let matches = []
             for(let route of this._routes){
                 let list = route.test(url)
-                matches.concat(list)
+                matches = matches.concat(list)
             }
 
             for(let route of matches){
-                // route.match()
+                route.match(new Context())
             }
+        })
+
+        EventSystem.instance.dom.onRoot((rid:string)=>{
+            console.log('on root',rid)
+            global.createRootView && global.createRootView(rid)
         })
         
     }
