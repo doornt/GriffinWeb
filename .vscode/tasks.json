@@ -7,13 +7,15 @@
             "type": "npm",
             "script": "test",
             "problemMatcher": []
-        },{
-            "type":"shell",
-            "command": "cd packages/griffin-render && npm run dist && echo finish",
-            "label": "compile-render"
         },
         {
-            "type":"shell",
+            "type": "shell",
+            "command": "cd packages/griffin-render && npm run dist && echo finish",
+            "label": "compile-render",
+            "problemMatcher": []
+        },
+        {
+            "type": "shell",
             "command": "cd packages/griffin-render && npm run build-publish ",
             "label": "publish-render"
         }

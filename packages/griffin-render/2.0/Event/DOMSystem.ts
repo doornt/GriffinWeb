@@ -1,4 +1,4 @@
-import Rx  = require('rxjs')
+import Rx  = require('rxjs/Rx')
 
 export class DOMEventSystem{
 

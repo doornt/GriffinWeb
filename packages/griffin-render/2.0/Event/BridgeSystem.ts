@@ -1,4 +1,4 @@
-import Rx = require('rxjs')
+import Rx = require('rxjs/Rx')
 
 export class BridgeSystem{
     
@@ -18,7 +18,7 @@ export class BridgeSystem{
     public dispatch(key:'load'){
         switch(key){
             case 'load':{
-                return this._loadedSubject.next()
+                return this._loadedSubject.next(null)
             }
         }
     }
