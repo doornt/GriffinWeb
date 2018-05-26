@@ -12,8 +12,7 @@ export class GN{
 
     listen(){
         EventSystem.instance.bridge.on('load',()=>{
-            let ctx = new Context(null)
-            ctx.push('/')
+            EventSystem.instance.dom.pushUrl('/')
         })
 
         EventSystem.instance.dom.onUrl((url:string)=>{
