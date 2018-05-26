@@ -1,4 +1,4 @@
-import Rx = require('rxjs/Rx')
+import Rx = require('rxjs')
 
 export class BridgeSystem{
     

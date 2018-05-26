@@ -32,6 +32,12 @@ export class GN{
             console.log('on root',rid)
             global.createRootView && global.createRootView(rid)
         })
+
+        EventSystem.instance.dom.onAddChildren((rid,id,children)=>{
+            console.log('add children',id,children)
+            global.addViews && global.addViews(rid,id, children)
+
+        })
         
     }
 }

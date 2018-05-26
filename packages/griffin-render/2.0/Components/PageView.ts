@@ -1,5 +1,6 @@
 import { Common } from '../Utils/Common';
 import { BaseComponent } from './BaseComponent';
+import { EventSystem } from '../Event/EventSystem';
 
 export class PageView{
 
@@ -15,5 +16,6 @@ export class PageView{
     public set component(cpt:typeof BaseComponent){
         this._component = new cpt
         this._component.pageId = this._id
+        EventSystem.instance.dom.addChildren(this._id,this._id,[this._component.id])
     }
 }
