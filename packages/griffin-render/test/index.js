@@ -15,12 +15,8 @@ const app = new App()
 
 const router = new Router()
 
-
-const c = new BaseComponent()
-
 router.use('/', ctx => {
-
-    ctx.render(c)
+    ctx.render(BaseComponent)
 })
 
 app.addRoute(router)

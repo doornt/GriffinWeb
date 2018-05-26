@@ -1,6 +1,7 @@
 import { EventSystem } from "../Event/EventSystem";
 import { PageView } from "../Components/PageView";
 import { MemoryMap } from "./MemoryMap";
+import { BaseComponent } from '../Components/BaseComponent';
 
 export class Context{
     private params:{[key:string]:any} = {}
@@ -17,5 +18,9 @@ export class Context{
 
     public push(url:string){
         EventSystem.instance.dom.pushUrl(url)
+    }
+
+    public render(cpt:typeof BaseComponent){
+        this.page.component = cpt
     }
 }
